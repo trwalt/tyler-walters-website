@@ -1,0 +1,848 @@
+/* ============================================================
+   TYLER WALTERS — SHARED STYLESHEET
+   style.css
+   Shared across all inner pages (about, work, contact, cv, press)
+   The landing page (index.html) embeds its own styles inline.
+============================================================ */
+
+/* ============================================================
+   CSS CUSTOM PROPERTIES
+============================================================ */
+:root {
+  --ground:        #1A0140;
+  --ground-darker: #110030;
+  --text:          #F0F0F8;
+  --text-dim:      rgba(240, 240, 248, 0.35);
+  --text-mid:      rgba(240, 240, 248, 0.65);
+  --accent:        #4A90D9;
+  --accent-dim:    rgba(74, 144, 217, 0.4);
+  --font:          'Inter', sans-serif;
+}
+
+/* ============================================================
+   RESET & BASE
+============================================================ */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--font);
+  background: var(--ground);
+  color: var(--text);
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ============================================================
+   SUBTLE PARALLAX BACKGROUND DRIFT
+============================================================ */
+.parallax-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0.055;
+}
+
+.parallax-bg-img {
+  width: 120%;
+  height: 120%;
+  object-fit: cover;
+  transform: translate(-10%, -10%) scale(1.05);
+  filter: blur(3px);
+  will-change: transform;
+}
+
+/* ============================================================
+   TOP NAVIGATION BAR
+============================================================ */
+.nav-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: baseline;
+  gap: 2.2rem;
+  padding: 1.6rem 3rem;
+  background: linear-gradient(
+    to bottom,
+    rgba(17, 0, 48, 0.94) 0%,
+    rgba(17, 0, 48, 0) 100%
+  );
+}
+
+.nav-item {
+  font-size: 0.7rem;
+  font-weight: 300;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--text-dim);
+  transition: color 0.25s ease, font-size 0.25s ease;
+  white-space: nowrap;
+}
+
+.nav-item:hover {
+  color: var(--text-mid);
+}
+
+.nav-item.active {
+  font-size: 0.84rem;
+  font-weight: 400;
+  color: var(--text);
+  border-bottom: 1px solid var(--accent);
+  padding-bottom: 0.1em;
+}
+
+.nav-home {
+  margin-right: auto;
+}
+
+/* ============================================================
+   SUBTITLE LINE
+   Appears below nav on all inner pages
+============================================================ */
+.site-subtitle {
+  position: fixed;
+  top: 3.6rem;
+  left: 0;
+  right: 0;
+  z-index: 99;
+  padding: 0.3rem 3rem;
+  font-size: 0.58rem;
+  font-weight: 300;
+  letter-spacing: 0.4em;
+  color: var(--text-dim);
+  pointer-events: none;
+}
+
+/* ============================================================
+   ABOUT PAGE — SUB-NAV
+============================================================ */
+.sub-nav {
+  position: fixed;
+  top: 4.2rem;
+  left: 0;
+  right: 0;
+  z-index: 99;
+  display: flex;
+  align-items: baseline;
+  padding: 0.4rem 3rem;
+  gap: 2rem;
+}
+
+.sub-nav-item {
+  font-size: 0.63rem;
+  font-weight: 300;
+  letter-spacing: 0.38em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.35s ease;
+  cursor: pointer;
+  color: var(--text-dim);
+}
+
+.sub-nav-item.left {
+  /* pushes bio link to the right */
+}
+
+.sub-nav-item.sub-active {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text);
+  border: 1px solid var(--accent-dim);
+  padding: 0.28em 0.75em;
+  letter-spacing: 0.3em;
+}
+
+.sub-nav-item.sub-inactive {
+  font-size: 0.6rem;
+  color: var(--text-dim);
+}
+
+.sub-nav-item:hover {
+  color: var(--text-mid);
+}
+
+/* ============================================================
+   ABOUT PAGE — STATEMENT SECTION
+============================================================ */
+.about-page {
+  padding-top: 8rem;
+}
+
+.statement-section {
+  min-height: 100vh;
+  padding: 0 3rem 6rem;
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.section-title {
+  font-size: 0.65rem;
+  font-weight: 300;
+  letter-spacing: 0.52em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 3rem;
+  opacity: 0.85;
+}
+
+/* Statement list */
+.statement-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.statement-item {
+  display: grid;
+  grid-template-columns: 1.4rem 1fr;
+  gap: 0 0.5rem;
+  align-items: start;
+  padding: 0.6rem 0;
+  border-top: 1px solid rgba(240, 240, 248, 0.055);
+  transition: background 0.2s ease;
+}
+
+.statement-item:last-of-type {
+  border-bottom: 1px solid rgba(240, 240, 248, 0.055);
+}
+
+.statement-item:hover {
+  background: rgba(74, 144, 217, 0.03);
+}
+
+.slash {
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 300;
+  line-height: 1.6;
+  padding-top: 0.12em;
+  opacity: 0.6;
+  user-select: none;
+}
+
+.statement-text {
+  font-size: clamp(0.86rem, 1.25vw, 1.02rem);
+  font-weight: 300;
+  color: var(--text);
+  letter-spacing: 0.01em;
+}
+
+.statement-text .line-1 {
+  display: block;
+  color: var(--text-mid);
+  line-height: 1.5;
+}
+
+.statement-text .line-2 {
+  display: block;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.statement-text em {
+  font-style: italic;
+  color: var(--text);
+}
+
+/* Final unmoored line */
+.statement-final {
+  margin-top: 2.8rem;
+  padding-left: 1.9rem;
+  font-size: clamp(0.86rem, 1.25vw, 1.02rem);
+  font-weight: 300;
+  color: var(--text-dim);
+  font-style: italic;
+  letter-spacing: 0.015em;
+}
+
+/* ============================================================
+   ABOUT PAGE — BIO SECTION
+============================================================ */
+.bio-section {
+  min-height: 100vh;
+  padding: 7rem 3rem 8rem;
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.accent-rule {
+  width: 2rem;
+  height: 1px;
+  background: var(--accent);
+  opacity: 0.45;
+  margin: 1.5rem 0 2.5rem;
+}
+
+.bio-text {
+  font-size: clamp(0.88rem, 1.28vw, 1.04rem);
+  font-weight: 300;
+  line-height: 1.9;
+  color: var(--text-mid);
+  letter-spacing: 0.01em;
+}
+
+.bio-text p {
+  margin-bottom: 1.85em;
+}
+
+.bio-text p:last-child {
+  margin-bottom: 0;
+}
+
+.bio-text em {
+  font-style: italic;
+  color: var(--text);
+}
+
+/* ============================================================
+   WORK PAGE
+============================================================ */
+.work-page {
+  padding-top: 4.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* Reel strip */
+.reel-strip {
+  width: 100%;
+  height: clamp(100px, 16vw, 220px);
+  overflow: hidden;
+  position: relative;
+  background: var(--ground-darker);
+  margin-bottom: 0;
+}
+
+.reel-strip video,
+.reel-strip img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 40%;
+  opacity: 0.8;
+  display: block;
+}
+
+/* Fade edges of reel */
+.reel-strip::before,
+.reel-strip::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 12%;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.reel-strip::before {
+  left: 0;
+  background: linear-gradient(to right, var(--ground) 0%, transparent 100%);
+}
+
+.reel-strip::after {
+  right: 0;
+  background: linear-gradient(to left, var(--ground) 0%, transparent 100%);
+}
+
+/* Section anchor nav */
+.work-nav {
+  position: sticky;
+  top: 3.5rem;
+  z-index: 90;
+  display: flex;
+  gap: 2.5rem;
+  padding: 0.9rem 3rem;
+  background: linear-gradient(
+    to bottom,
+    rgba(26, 1, 64, 0.96) 0%,
+    rgba(26, 1, 64, 0) 100%
+  );
+}
+
+.work-nav a {
+  font-size: 0.62rem;
+  font-weight: 300;
+  letter-spacing: 0.38em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--text-dim);
+  transition: color 0.25s ease;
+  white-space: nowrap;
+}
+
+.work-nav a:hover,
+.work-nav a.section-active {
+  color: var(--accent);
+}
+
+/* Work sections */
+.work-section {
+  padding: 4.5rem 3rem 2rem;
+}
+
+.work-section-header {
+  margin-bottom: 3.5rem;
+}
+
+.work-section-title {
+  font-size: 0.62rem;
+  font-weight: 300;
+  letter-spacing: 0.55em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1rem;
+  opacity: 0.8;
+}
+
+.work-section-intro {
+  font-size: clamp(0.86rem, 1.25vw, 1.02rem);
+  font-weight: 300;
+  line-height: 1.82;
+  color: var(--text-mid);
+  max-width: 700px;
+}
+
+/* Work entry — two-box parallax layout */
+.work-entry {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3px;
+  margin-bottom: 4px;
+  position: relative;
+}
+
+/* Alternating layout: odd entries have video right */
+.work-entry:nth-child(odd) .work-video-box {
+  order: 2;
+}
+.work-entry:nth-child(odd) .work-statement-box {
+  order: 1;
+}
+
+/* Video box */
+.work-video-box {
+  position: relative;
+  background: var(--ground-darker);
+  aspect-ratio: 16/9;
+  overflow: hidden;
+  will-change: transform;
+}
+
+.work-video-box iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+.video-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(74, 144, 217, 0.04);
+  border: 1px solid rgba(74, 144, 217, 0.1);
+}
+
+.video-placeholder span {
+  font-size: 0.6rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--accent-dim);
+}
+
+/* Statement box */
+.work-statement-box {
+  background: rgba(240, 240, 248, 0.022);
+  padding: 2.4rem 2.6rem;
+  display: flex;
+  flex-direction: column;
+  will-change: transform;
+}
+
+.work-title {
+  font-size: clamp(1.05rem, 1.8vw, 1.4rem);
+  font-weight: 200;
+  letter-spacing: 0.03em;
+  color: var(--text);
+  margin-bottom: 0.25rem;
+  font-style: italic;
+}
+
+.work-meta {
+  font-size: 0.6rem;
+  font-weight: 300;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--accent);
+  opacity: 0.65;
+  margin-bottom: 1.5rem;
+}
+
+.work-collaborators {
+  font-size: 0.6rem;
+  font-weight: 300;
+  letter-spacing: 0.25em;
+  color: var(--text-dim);
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
+}
+
+.work-statement-preview {
+  font-size: clamp(0.8rem, 1.1vw, 0.93rem);
+  font-weight: 300;
+  line-height: 1.82;
+  color: var(--text-mid);
+  flex: 1;
+}
+
+/* MORE / LESS toggle */
+.work-more-btn {
+  display: inline-block;
+  margin-top: 1.4rem;
+  align-self: flex-start;
+  font-size: 0.6rem;
+  font-weight: 300;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--accent);
+  cursor: pointer;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--accent-dim);
+  padding-bottom: 0.12em;
+  transition: color 0.2s ease, border-color 0.2s ease;
+  font-family: var(--font);
+}
+
+.work-more-btn:hover {
+  color: var(--text);
+  border-color: var(--text-mid);
+}
+
+.work-statement-full {
+  display: none;
+  font-size: clamp(0.8rem, 1.1vw, 0.93rem);
+  font-weight: 300;
+  line-height: 1.82;
+  color: var(--text-mid);
+  margin-top: 1.2rem;
+  border-top: 1px solid rgba(240, 240, 248, 0.06);
+  padding-top: 1.2rem;
+}
+
+.work-statement-full.expanded {
+  display: block;
+}
+
+/* Negative Mirror section label */
+.negative-mirror-label {
+  font-size: 0.6rem;
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 0.4rem;
+}
+
+/* ============================================================
+   CONTACT PAGE
+============================================================ */
+.contact-page {
+  padding-top: 9rem;
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+.contact-inner {
+  max-width: 560px;
+  padding: 0 3rem 7rem;
+  margin: 0 auto;
+}
+
+.contact-text {
+  font-size: clamp(0.88rem, 1.28vw, 1.04rem);
+  font-weight: 300;
+  line-height: 1.85;
+  color: var(--text-mid);
+  margin-bottom: 2.8rem;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.3rem;
+}
+
+.contact-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.contact-label {
+  font-size: 0.6rem;
+  font-weight: 300;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.contact-input,
+.contact-textarea {
+  background: rgba(240, 240, 248, 0.035);
+  border: 1px solid rgba(240, 240, 248, 0.1);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 0.9rem;
+  font-weight: 300;
+  padding: 0.75rem 1rem;
+  outline: none;
+  transition: border-color 0.25s ease;
+  resize: none;
+  -webkit-appearance: none;
+  border-radius: 0;
+}
+
+.contact-input:focus,
+.contact-textarea:focus {
+  border-color: var(--accent-dim);
+}
+
+.contact-textarea {
+  min-height: 130px;
+}
+
+.contact-submit {
+  align-self: flex-start;
+  font-family: var(--font);
+  font-size: 0.62rem;
+  font-weight: 300;
+  letter-spacing: 0.46em;
+  text-transform: uppercase;
+  color: var(--text);
+  background: transparent;
+  border: 1px solid rgba(240, 240, 248, 0.28);
+  padding: 0.72em 2.4em;
+  cursor: pointer;
+  transition: border-color 0.25s ease, color 0.25s ease;
+}
+
+.contact-submit:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ============================================================
+   CV PAGE
+============================================================ */
+.cv-page {
+  padding-top: 8rem;
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+.cv-inner {
+  max-width: 800px;
+  padding: 0 3rem 7rem;
+  margin: 0 auto;
+}
+
+.cv-download-link {
+  display: inline-block;
+  font-size: 0.6rem;
+  font-weight: 300;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid var(--accent-dim);
+  padding-bottom: 0.12em;
+  margin-bottom: 3rem;
+  transition: color 0.2s ease;
+}
+
+.cv-download-link:hover {
+  color: var(--text);
+}
+
+.cv-section {
+  margin-bottom: 3rem;
+}
+
+.cv-section-heading {
+  font-size: 0.62rem;
+  font-weight: 300;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: var(--accent);
+  opacity: 0.75;
+  margin-bottom: 1.2rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(240, 240, 248, 0.07);
+}
+
+.cv-entry {
+  display: grid;
+  grid-template-columns: 5rem 1fr;
+  gap: 0 1.5rem;
+  padding: 0.55rem 0;
+  border-top: 1px solid rgba(240, 240, 248, 0.04);
+  font-size: clamp(0.82rem, 1.1vw, 0.92rem);
+  font-weight: 300;
+  line-height: 1.65;
+}
+
+.cv-year {
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+  padding-top: 0.05em;
+}
+
+.cv-detail {
+  color: var(--text-mid);
+}
+
+.cv-detail em {
+  font-style: italic;
+  color: var(--text);
+}
+
+/* ============================================================
+   PRESS PAGE
+============================================================ */
+.press-page {
+  padding-top: 8rem;
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+.press-inner {
+  max-width: 800px;
+  padding: 0 3rem 7rem;
+  margin: 0 auto;
+}
+
+.press-placeholder {
+  font-size: clamp(0.88rem, 1.28vw, 1.04rem);
+  font-weight: 300;
+  line-height: 1.85;
+  color: var(--text-dim);
+  font-style: italic;
+  max-width: 560px;
+}
+
+/* ============================================================
+   VIRTUAL INSTALLATION PAGES
+============================================================ */
+.installation-page {
+  padding-top: 4rem;
+  min-height: 100vh;
+  background: #000;
+  position: relative;
+  z-index: 1;
+}
+
+.installation-canvas-wrapper {
+  width: 100%;
+  height: calc(100vh - 4rem);
+  position: relative;
+  overflow: hidden;
+}
+
+.installation-info {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 3rem;
+  z-index: 10;
+  font-size: 0.58rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: rgba(240, 240, 248, 0.3);
+  pointer-events: none;
+}
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+@media (max-width: 800px) {
+  .work-entry {
+    grid-template-columns: 1fr;
+  }
+
+  .work-entry:nth-child(odd) .work-video-box,
+  .work-entry:nth-child(odd) .work-statement-box {
+    order: unset;
+  }
+
+  .work-video-box {
+    aspect-ratio: 16/9;
+  }
+}
+
+@media (max-width: 600px) {
+  .nav-bar {
+    padding: 1.1rem 1.4rem;
+    gap: 1.1rem;
+    flex-wrap: wrap;
+  }
+
+  .sub-nav {
+    padding: 0.4rem 1.4rem;
+  }
+
+  .statement-section,
+  .bio-section,
+  .work-section,
+  .contact-inner,
+  .cv-inner,
+  .press-inner {
+    padding-left: 1.4rem;
+    padding-right: 1.4rem;
+  }
+
+  .work-statement-box {
+    padding: 1.6rem 1.4rem;
+  }
+
+  .work-nav {
+    padding: 0.8rem 1.4rem;
+    gap: 1.4rem;
+    flex-wrap: wrap;
+  }
+}
+
+/* ============================================================
+   UTILITY
+============================================================ */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+}

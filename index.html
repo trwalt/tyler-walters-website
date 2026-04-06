@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tyler Walters</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================
+       CSS CUSTOM PROPERTIES
+    ============================================================ */
+    :root {
+      --ground:        #1A0140;
+      --ground-darker: #110030;
+      --text:          #F0F0F8;
+      --text-dim:      rgba(240, 240, 248, 0.35);
+      --text-mid:      rgba(240, 240, 248, 0.65);
+      --accent:        #4A90D9;
+      --accent-dim:    rgba(74, 144, 217, 0.4);
+      --font:          'Inter', sans-serif;
+    }
+
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      font-family: var(--font);
+      background: var(--ground-darker);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ============================================================
+       LANDING PAGE
+    ============================================================ */
+    .landing {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: var(--ground-darker);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Scroll-sequence canvas — flour gesture frames */
+    .scroll-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+
+    /* Dark vignette overlay so text remains readable */
+    .landing::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        ellipse at center,
+        transparent 30%,
+        rgba(17, 0, 48, 0.55) 75%,
+        rgba(17, 0, 48, 0.85) 100%
+      );
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* Name — centred, always visible */
+    .landing-name {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      text-align: center;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .landing-name h1 {
+      font-size: clamp(2.8rem, 6vw, 5.5rem);
+      font-weight: 200;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    /* ENTER button */
+    .enter-btn {
+      position: absolute;
+      bottom: 8vh;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      font-family: var(--font);
+      font-size: clamp(0.7rem, 1.2vw, 0.95rem);
+      font-weight: 300;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: var(--text);
+      background: transparent;
+      border: 1px solid rgba(240, 240, 248, 0.35);
+      padding: 0.75em 2.5em;
+      cursor: pointer;
+      opacity: 0.18;           /* faintly visible before scroll */
+      transition: opacity 0.6s ease, border-color 0.4s ease, color 0.4s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .enter-btn:hover {
+      opacity: 1;
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* ENTER becomes more visible as scroll progresses — set via JS */
+    .enter-btn.revealed {
+      opacity: 1;
+    }
+
+    /* Subtle scroll-prompt arrow below name */
+    .scroll-hint {
+      position: absolute;
+      bottom: calc(8vh + 4.5rem);
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      opacity: 0.25;
+      pointer-events: none;
+      animation: drift 2.4s ease-in-out infinite;
+    }
+
+    .scroll-hint svg {
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: var(--text);
+      stroke-width: 1.5;
+    }
+
+    @keyframes drift {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50%       { transform: translateX(-50%) translateY(6px); }
+    }
+
+    /* ============================================================
+       SCROLL CONTAINER
+       The page is taller than 100vh so the user can scroll
+       to advance the frame sequence, then the ENTER button
+       appears. Below the sequence the page is transparent —
+       the canvas effect handles the visual.
+    ============================================================ */
+    .scroll-driver {
+      position: relative;
+      height: 400vh;    /* controls how many px of scroll = full sequence */
+      width: 100%;
+    }
+
+    .sticky-stage {
+      position: sticky;
+      top: 0;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ============================================================
+       GLOBAL NAV (hidden on landing, shown on all inner pages)
+    ============================================================ */
+    .site-nav {
+      display: none;   /* landing page: no nav */
+    }
+
+    /* ============================================================
+       INNER PAGE SHARED STYLES
+       (These classes are used across about.html, work.html, etc.)
+    ============================================================ */
+
+    /* Page wrapper */
+    .page {
+      min-height: 100vh;
+      background: var(--ground);
+      color: var(--text);
+    }
+
+    /* Top navigation bar */
+    .nav-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: baseline;
+      gap: 2rem;
+      padding: 1.6rem 3rem;
+      background: linear-gradient(
+        to bottom,
+        rgba(17, 0, 48, 0.92) 0%,
+        rgba(17, 0, 48, 0) 100%
+      );
+      backdrop-filter: blur(0px);
+    }
+
+    .nav-item {
+      font-size: 0.72rem;
+      font-weight: 300;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--text-dim);
+      transition: color 0.25s ease, font-size 0.25s ease, opacity 0.25s ease;
+      white-space: nowrap;
+    }
+
+    .nav-item:hover {
+      color: var(--text-mid);
+    }
+
+    /* Active page nav item */
+    .nav-item.active {
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: var(--text);
+      border-bottom: 1px solid var(--accent);
+      padding-bottom: 0.1em;
+    }
+
+    /* HOME item always goes back to landing */
+    .nav-home {
+      margin-right: auto;
+    }
+
+    /* ============================================================
+       ABOUT PAGE — ARTIST STATEMENT
+    ============================================================ */
+    .about-page {
+      padding-top: 7rem;
+    }
+
+    /* Sub-navigation (Statement / Bio) */
+    .sub-nav {
+      position: fixed;
+      top: 3.8rem;
+      left: 0;
+      right: 0;
+      z-index: 99;
+      display: flex;
+      align-items: baseline;
+      padding: 0.5rem 3rem;
+      gap: 2rem;
+    }
+
+    .sub-nav-item {
+      font-size: 0.65rem;
+      font-weight: 300;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: all 0.35s ease;
+      cursor: pointer;
+    }
+
+    .sub-nav-item.left {
+      margin-right: auto;
+    }
+
+    .sub-nav-item.sub-active {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text);
+      border: 1px solid var(--accent-dim);
+      padding: 0.3em 0.8em;
+    }
+
+    .sub-nav-item.sub-inactive {
+      color: var(--text-dim);
+      font-size: 0.62rem;
+    }
+
+    /* Statement section */
+    .statement-section {
+      min-height: 100vh;
+      padding: 6rem 3rem 6rem;
+      max-width: 780px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      font-size: 0.68rem;
+      font-weight: 300;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 3.5rem;
+    }
+
+    /* The slash bullet */
+    .statement-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .statement-item {
+      display: grid;
+      grid-template-columns: 1.2rem 1fr;
+      gap: 0 0.6rem;
+      align-items: start;
+      padding: 0.55rem 0;
+      border-top: 1px solid rgba(240, 240, 248, 0.06);
+    }
+
+    .statement-item:last-child {
+      border-bottom: 1px solid rgba(240, 240, 248, 0.06);
+    }
+
+    .slash {
+      color: var(--accent);
+      font-size: 0.85rem;
+      font-weight: 300;
+      padding-top: 0.15em;
+      line-height: 1.5;
+      opacity: 0.7;
+    }
+
+    .statement-text {
+      font-size: clamp(0.88rem, 1.3vw, 1.05rem);
+      font-weight: 300;
+      line-height: 1.55;
+      color: var(--text);
+      letter-spacing: 0.01em;
+    }
+
+    /* The two-line stanza split — first line slightly lighter */
+    .statement-text .line-1 {
+      display: block;
+      color: var(--text-mid);
+    }
+
+    .statement-text .line-2 {
+      display: block;
+      color: var(--text);
+    }
+
+    /* Final unmoored line — no bullet, slightly apart */
+    .statement-final {
+      margin-top: 2.5rem;
+      padding-left: 1.8rem;
+      font-size: clamp(0.88rem, 1.3vw, 1.05rem);
+      font-weight: 300;
+      color: var(--text-mid);
+      font-style: italic;
+      letter-spacing: 0.01em;
+    }
+
+    /* Bio section */
+    .bio-section {
+      min-height: 100vh;
+      padding: 6rem 3rem 8rem;
+      max-width: 780px;
+      margin: 0 auto;
+    }
+
+    .bio-text {
+      font-size: clamp(0.9rem, 1.3vw, 1.05rem);
+      font-weight: 300;
+      line-height: 1.85;
+      color: var(--text);
+      letter-spacing: 0.01em;
+    }
+
+    .bio-text p {
+      margin-bottom: 1.8em;
+    }
+
+    .bio-text p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Work titles in bio */
+    .bio-text em {
+      font-style: italic;
+      color: var(--text);
+    }
+
+    /* ============================================================
+       WORK PAGE
+    ============================================================ */
+    .work-page {
+      padding-top: 5rem;
+    }
+
+    /* Reel strip */
+    .reel-strip {
+      width: 100%;
+      height: clamp(120px, 18vw, 240px);
+      overflow: hidden;
+      position: relative;
+      background: var(--ground-darker);
+    }
+
+    .reel-strip video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
+      opacity: 0.85;
+    }
+
+    .reel-strip::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to right,
+        var(--ground) 0%,
+        transparent 8%,
+        transparent 92%,
+        var(--ground) 100%
+      );
+      pointer-events: none;
+    }
+
+    /* Work section navigation anchors */
+    .work-nav {
+      position: sticky;
+      top: 3.8rem;
+      z-index: 90;
+      display: flex;
+      gap: 2rem;
+      padding: 1rem 3rem;
+      background: linear-gradient(
+        to bottom,
+        rgba(26, 1, 64, 0.95) 0%,
+        rgba(26, 1, 64, 0.0) 100%
+      );
+    }
+
+    .work-nav a {
+      font-size: 0.65rem;
+      font-weight: 300;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--text-dim);
+      transition: color 0.25s ease;
+    }
+
+    .work-nav a:hover,
+    .work-nav a.section-active {
+      color: var(--accent);
+    }
+
+    /* Work section headings */
+    .work-section {
+      padding: 5rem 3rem 3rem;
+    }
+
+    .work-section-title {
+      font-size: 0.65rem;
+      font-weight: 300;
+      letter-spacing: 0.55em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+      opacity: 0.8;
+    }
+
+    .work-section-intro {
+      font-size: clamp(0.88rem, 1.3vw, 1.05rem);
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--text-mid);
+      max-width: 680px;
+      margin-bottom: 4rem;
+    }
+
+    /* Individual work entry — parallax two-box layout */
+    .work-entry {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      margin-bottom: 6px;
+      position: relative;
+    }
+
+    @media (max-width: 800px) {
+      .work-entry {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Video box */
+    .work-video-box {
+      position: relative;
+      background: var(--ground-darker);
+      aspect-ratio: 16/9;
+      overflow: hidden;
+      will-change: transform;
+    }
+
+    .work-video-box iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    /* Video placeholder (until real embeds available) */
+    .video-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(74, 144, 217, 0.05);
+      border: 1px solid rgba(74, 144, 217, 0.15);
+    }
+
+    .video-placeholder span {
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent-dim);
+    }
+
+    /* Statement box */
+    .work-statement-box {
+      background: rgba(240, 240, 248, 0.025);
+      padding: 2.5rem 2.8rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      will-change: transform;
+    }
+
+    .work-title {
+      font-size: clamp(1.1rem, 2vw, 1.5rem);
+      font-weight: 200;
+      letter-spacing: 0.04em;
+      color: var(--text);
+      margin-bottom: 0.3rem;
+      font-style: italic;
+    }
+
+    .work-meta {
+      font-size: 0.65rem;
+      font-weight: 300;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      opacity: 0.7;
+      margin-bottom: 1.6rem;
+    }
+
+    .work-statement-preview {
+      font-size: clamp(0.82rem, 1.15vw, 0.95rem);
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--text-mid);
+      flex: 1;
+    }
+
+    .work-more-btn {
+      display: inline-block;
+      margin-top: 1.5rem;
+      font-size: 0.62rem;
+      font-weight: 300;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--accent);
+      cursor: pointer;
+      background: none;
+      border: none;
+      border-bottom: 1px solid var(--accent-dim);
+      padding-bottom: 0.15em;
+      transition: color 0.2s ease, border-color 0.2s ease;
+      font-family: var(--font);
+    }
+
+    .work-more-btn:hover {
+      color: var(--text);
+      border-color: var(--text-mid);
+    }
+
+    /* Expanded statement (hidden until MORE clicked) */
+    .work-statement-full {
+      display: none;
+      font-size: clamp(0.82rem, 1.15vw, 0.95rem);
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--text-mid);
+      margin-top: 1rem;
+    }
+
+    .work-statement-full.expanded {
+      display: block;
+    }
+
+    /* ============================================================
+       PARALLAX — the two boxes scroll at slightly different rates
+    ============================================================ */
+    /* Applied via JS — see script section */
+
+    /* ============================================================
+       CONTACT PAGE
+    ============================================================ */
+    .contact-page {
+      padding-top: 8rem;
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+
+    .contact-inner {
+      max-width: 560px;
+      width: 100%;
+      padding: 0 3rem 6rem;
+    }
+
+    .contact-inner .section-title {
+      margin-bottom: 3rem;
+    }
+
+    .contact-text {
+      font-size: clamp(0.88rem, 1.3vw, 1.05rem);
+      font-weight: 300;
+      line-height: 1.85;
+      color: var(--text-mid);
+      margin-bottom: 2.5rem;
+    }
+
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+
+    .contact-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .contact-label {
+      font-size: 0.62rem;
+      font-weight: 300;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .contact-input,
+    .contact-textarea {
+      background: rgba(240, 240, 248, 0.04);
+      border: 1px solid rgba(240, 240, 248, 0.12);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 0.9rem;
+      font-weight: 300;
+      padding: 0.75rem 1rem;
+      outline: none;
+      transition: border-color 0.25s ease;
+      resize: none;
+    }
+
+    .contact-input:focus,
+    .contact-textarea:focus {
+      border-color: var(--accent-dim);
+    }
+
+    .contact-textarea {
+      min-height: 140px;
+    }
+
+    .contact-submit {
+      align-self: flex-start;
+      font-family: var(--font);
+      font-size: 0.65rem;
+      font-weight: 300;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: var(--text);
+      background: transparent;
+      border: 1px solid rgba(240, 240, 248, 0.3);
+      padding: 0.75em 2.5em;
+      cursor: pointer;
+      transition: border-color 0.25s ease, color 0.25s ease;
+    }
+
+    .contact-submit:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* ============================================================
+       SUBTLE PARALLAX BACKGROUND DRIFT
+       Used on inner pages as ambient motion
+    ============================================================ */
+    .parallax-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+      opacity: 0.06;
+    }
+
+    .parallax-bg-img {
+      width: 120%;
+      height: 120%;
+      object-fit: cover;
+      transform: translate(-10%, -10%);
+      animation: bgDrift 40s ease-in-out infinite alternate;
+      filter: blur(2px);
+    }
+
+    @keyframes bgDrift {
+      0%   { transform: translate(-10%, -10%) scale(1.05); }
+      100% { transform: translate(-5%,  -5%) scale(1.0);  }
+    }
+
+    /* ============================================================
+       RESPONSIVE ADJUSTMENTS
+    ============================================================ */
+    @media (max-width: 600px) {
+      .nav-bar {
+        padding: 1.2rem 1.5rem;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .statement-section,
+      .bio-section,
+      .work-section {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+      }
+
+      .work-statement-box {
+        padding: 1.8rem 1.5rem;
+      }
+
+      .landing-name h1 {
+        letter-spacing: 0.2em;
+      }
+    }
+
+    /* ============================================================
+       UTILITY
+    ============================================================ */
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+    }
+
+    /* Thin accent rule used as section divider */
+    .accent-rule {
+      width: 2rem;
+      height: 1px;
+      background: var(--accent);
+      opacity: 0.5;
+      margin: 2rem 0;
+    }
+
+  </style>
+</head>
+<body>
+
+<!-- ============================================================
+     LANDING PAGE
+============================================================ -->
+<div class="scroll-driver">
+  <div class="sticky-stage landing" id="landing">
+
+    <!-- Flour gesture sequence — canvas renders frames on scroll -->
+    <canvas id="seq-canvas" class="scroll-canvas" aria-hidden="true"></canvas>
+
+    <!-- Name -->
+    <div class="landing-name" aria-label="Tyler Walters">
+      <h1>Tyler&nbsp;Walters</h1>
+    </div>
+
+    <!-- Scroll hint -->
+    <div class="scroll-hint" aria-hidden="true">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <polyline points="6 9 12 15 18 9"/>
+      </svg>
+    </div>
+
+    <!-- ENTER button — links to about.html -->
+    <a href="about.html" class="enter-btn" id="enter-btn" aria-label="Enter site">
+      Enter
+    </a>
+
+  </div>
+</div><!-- end scroll-driver -->
+
+
+<!-- ============================================================
+     JAVASCRIPT — SCROLL SEQUENCE + ENTER REVEAL
+============================================================ -->
+<script>
+(function () {
+  'use strict';
+
+  /* ----------------------------------------------------------
+     CONFIGURATION
+     Replace FRAME_COUNT and FRAME_PATH with your actual values
+     once the SkyTy frame sequence is exported.
+
+     Frames should be named:  frame001.jpg, frame002.jpg, ...
+     and placed in a folder:  assets/skyty-frames/
+  ---------------------------------------------------------- */
+  const FRAME_COUNT = 80;          // total frames exported from video
+  const FRAME_PATH  = 'assets/skyty-frames/frame';   // prefix
+  const FRAME_EXT   = '.jpg';
+  const REVEAL_START = 0.55;       // scroll progress at which ENTER begins appearing
+  const REVEAL_FULL  = 0.85;       // scroll progress at which ENTER is fully visible
+
+  /* ----------------------------------------------------------
+     ELEMENTS
+  ---------------------------------------------------------- */
+  const canvas   = document.getElementById('seq-canvas');
+  const ctx      = canvas.getContext('2d');
+  const enterBtn = document.getElementById('enter-btn');
+  const driver   = document.querySelector('.scroll-driver');
+
+  /* ----------------------------------------------------------
+     RESIZE CANVAS
+  ---------------------------------------------------------- */
+  function resizeCanvas () {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+    if (currentFrame && frames[currentFrame]) {
+      ctx.drawImage(frames[currentFrame], 0, 0, canvas.width, canvas.height);
+    }
+  }
+
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  /* ----------------------------------------------------------
+     PRELOAD FRAMES
+     While loading, the canvas stays at 0 opacity (set in CSS).
+     Once the first frame loads we fade it in.
+  ---------------------------------------------------------- */
+  const frames = new Array(FRAME_COUNT);
+  let loadedCount = 0;
+  let currentFrame = 0;
+  let firstFrameLoaded = false;
+
+  function padIndex (i) {
+    return String(i + 1).padStart(3, '0');
+  }
+
+  for (let i = 0; i < FRAME_COUNT; i++) {
+    const img = new Image();
+    img.src = FRAME_PATH + padIndex(i) + FRAME_EXT;
+    img.onload = function () {
+      frames[i] = img;
+      loadedCount++;
+      if (!firstFrameLoaded && i === 0) {
+        firstFrameLoaded = true;
+        canvas.style.opacity = '1';
+        ctx.drawImage(frames[0], 0, 0, canvas.width, canvas.height);
+      }
+    };
+    img.onerror = function () {
+      /* Frame failed to load — use placeholder tint instead */
+      loadedCount++;
+      frames[i] = null;
+    };
+  }
+
+  /* ----------------------------------------------------------
+     SCROLL HANDLER
+  ---------------------------------------------------------- */
+  function onScroll () {
+    const driverH   = driver.offsetHeight;
+    const viewH     = window.innerHeight;
+    const scrollY   = window.scrollY;
+    const maxScroll = driverH - viewH;
+    const progress  = Math.min(Math.max(scrollY / maxScroll, 0), 1);
+
+    /* Advance frame */
+    const targetFrame = Math.min(
+      Math.floor(progress * (FRAME_COUNT - 1)),
+      FRAME_COUNT - 1
+    );
+
+    if (targetFrame !== currentFrame && frames[targetFrame]) {
+      currentFrame = targetFrame;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(frames[currentFrame], 0, 0, canvas.width, canvas.height);
+    }
+
+    /* Reveal ENTER button */
+    if (progress >= REVEAL_START) {
+      const revealProgress = (progress - REVEAL_START) / (REVEAL_FULL - REVEAL_START);
+      const opacity = Math.min(revealProgress, 1);
+      enterBtn.style.opacity = String(Math.max(0.18, opacity));
+      if (opacity >= 0.98) {
+        enterBtn.classList.add('revealed');
+      }
+    } else {
+      enterBtn.style.opacity = '0.18';
+      enterBtn.classList.remove('revealed');
+    }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  /* ----------------------------------------------------------
+     PLACEHOLDER: if no frames load (assets not yet prepared),
+     draw a gradient tint so the page still looks intentional.
+  ---------------------------------------------------------- */
+  setTimeout(function () {
+    if (!firstFrameLoaded) {
+      canvas.style.opacity = '0.6';
+      const grad = ctx.createRadialGradient(
+        canvas.width * 0.5, canvas.height * 0.45, 0,
+        canvas.width * 0.5, canvas.height * 0.45, canvas.width * 0.6
+      );
+      grad.addColorStop(0,   'rgba(74, 144, 217, 0.18)');
+      grad.addColorStop(0.5, 'rgba(74, 60, 160, 0.12)');
+      grad.addColorStop(1,   'rgba(17, 0, 48, 0)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+  }, 2000);
+
+})();
+</script>
+
+</body>
+</html>
