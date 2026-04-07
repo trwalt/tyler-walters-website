@@ -6,7 +6,7 @@
   <title>Tyler Walters</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
   <style>
 
     /* ============================================================
@@ -21,139 +21,169 @@
     html, body {
       width: 100%;
       height: 100%;
-      overflow: hidden;   /* NO page scroll — sequence driven by wheel/touch */
+      overflow: hidden;
       background: #140030;
       font-family: 'Inter', sans-serif;
+      /* Minimum height: preserves enough image to be meaningful */
+      min-height: 320px;
     }
 
     /* ============================================================
-       FULL-SCREEN FIXED CANVAS
-       Image fills the entire viewport and never moves
+       LAYOUT STRUCTURE
+       Two rows:
+         1. Title band  — fixed height, ground color
+         2. Canvas area — remaining height, image fills it
     ============================================================ */
-    #seq-canvas {
+
+    /* The title band height — adjust this value to taste */
+    :root {
+      --band-height: clamp(52px, 8vh, 80px);
+      --ground:      #140030;
+      --text:        #F0F0F8;
+      --accent:      #4A90D9;
+    }
+
+    /* ============================================================
+       TITLE BAND — solid ground color, full width
+    ============================================================ */
+    #title-band {
       position: fixed;
       top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      display: block;
-    }
-
-    /* ============================================================
-       DARK VIGNETTE
-       Dark strip at top for title legibility,
-       subtle darkening at bottom edges
-    ============================================================ */
-    #vignette {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      pointer-events: none;
-      z-index: 2;
-      background:
-        linear-gradient(to bottom,
-          rgba(20, 0, 48, 0.80) 0%,
-          rgba(20, 0, 48, 0.0) 20%,
-          rgba(20, 0, 48, 0.0) 78%,
-          rgba(20, 0, 48, 0.50) 100%
-        );
-    }
-
-    /* ============================================================
-       TITLE — sits in the dark strip at the top
-    ============================================================ */
-    #title {
-      position: fixed;
-      top: 5vh;
       left: 0;
       right: 0;
-      z-index: 10;
-      text-align: center;
-      pointer-events: none;
+      height: var(--band-height);
+      background: var(--ground);
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #title-band h1 {
+      font-family: 'Inter', sans-serif;
+      font-weight: 100;
+      font-style: italic;
+      font-size: clamp(1.4rem, 3.2vw, 3.2rem);
+      letter-spacing: 0.28em;
+      color: var(--text);
+      line-height: 1;
+      text-transform: none;
       user-select: none;
     }
 
-    #title h1 {
-      font-family: 'Inter', sans-serif;
-      font-size: clamp(2rem, 4.5vw, 4.4rem);
-      font-weight: 200;
-      letter-spacing: 0.32em;
-      text-transform: none;   /* "Tyler Walters" — no forced caps */
-      color: #F0F0F8;
-      line-height: 1;
+    /* ============================================================
+       CANVAS — fills everything below the title band
+       Never moves. Image covers this area.
+    ============================================================ */
+    #seq-canvas {
+      position: fixed;
+      top: var(--band-height);
+      left: 0;
+      width: 100vw;
+      /* Height = viewport minus the title band */
+      height: calc(100vh - var(--band-height));
+      display: block;
+      /* Enforce minimum aspect ratio: if window is too short,
+         canvas maintains 16:9 minimum and overflows (hidden by body) */
+      min-height: calc((100vw) * 9 / 16);
     }
 
     /* ============================================================
-       ENTER BUTTON
-       Right side, vertically centred — away from figure
+       SUBTLE BOTTOM VIGNETTE
+       Just slightly darkens bottom edge so ENTER is legible
     ============================================================ */
-    #enter-btn {
+    #vignette {
       position: fixed;
-      right: 4vw;
-      top: 50%;
-      transform: translateY(-50%);
+      top: var(--band-height);
+      left: 0;
+      width: 100vw;
+      height: calc(100vh - var(--band-height));
+      pointer-events: none;
+      z-index: 3;
+      background: linear-gradient(
+        to bottom,
+        rgba(20, 0, 48, 0.0)  0%,
+        rgba(20, 0, 48, 0.0)  70%,
+        rgba(20, 0, 48, 0.65) 100%
+      );
+    }
+
+    /* ============================================================
+       BOTTOM-LEFT CLUSTER
+       Contains: two scroll arrows + ENTER button
+       Sits in the consistently dark bottom area
+    ============================================================ */
+    #bottom-left {
+      position: fixed;
+      bottom: 4vh;
+      left: 4vw;
       z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.6rem;
+    }
 
+    /* Scroll arrows — two chevrons stacked, prompt the visitor to scroll */
+    #scroll-arrows {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.15rem;
+      opacity: 0.28;   /* starts faint, brightens slightly on scroll */
+      transition: opacity 0.5s ease;
+      pointer-events: none;
+      margin-left: 0.4rem;  /* align roughly with ENTER text */
+    }
+
+    #scroll-arrows svg {
+      width: 14px;
+      height: 10px;
+      fill: none;
+      stroke: var(--text);
+      stroke-width: 1.5;
+      animation: arrowBob 1.8s ease-in-out infinite;
+    }
+
+    #scroll-arrows svg:nth-child(2) {
+      animation-delay: 0.2s;
+      opacity: 0.6;
+    }
+
+    @keyframes arrowBob {
+      0%, 100% { transform: translateY(0);   }
+      50%       { transform: translateY(3px); }
+    }
+
+    /* ENTER button — horizontal, bottom left */
+    #enter-btn {
+      display: inline-block;
       font-family: 'Inter', sans-serif;
-      font-size: clamp(0.58rem, 0.9vw, 0.78rem);
+      font-size: clamp(0.6rem, 0.85vw, 0.78rem);
       font-weight: 300;
-      letter-spacing: 0.48em;
+      letter-spacing: 0.52em;
       text-transform: uppercase;
-      color: #F0F0F8;
+      writing-mode: horizontal-tb;   /* normal horizontal text */
+      text-orientation: mixed;
+      color: var(--text);
       text-decoration: none;
-
       background: transparent;
       border: 1px solid rgba(240, 240, 248, 0.28);
-      padding: 0.8em 1.6em;
-
-      opacity: 0.18;
+      padding: 0.65em 2em;
+      /* Slightly more visible at start than before */
+      opacity: 0.28;
       transition: opacity 0.5s ease, border-color 0.4s ease,
-                  color 0.4s ease, transform 0.4s ease;
-      display: inline-block;
-      writing-mode: vertical-rl;   /* vertical text suits the side placement */
-      text-orientation: mixed;
+                  color 0.4s ease, font-size 0.3s ease;
     }
 
     #enter-btn:hover {
       opacity: 1 !important;
-      border-color: #4A90D9;
-      color: #4A90D9;
+      border-color: var(--accent);
+      color: var(--accent);
     }
 
     /* ============================================================
-       SCROLL HINT — chevron below title, fades on first scroll
-    ============================================================ */
-    #scroll-hint {
-      position: fixed;
-      top: calc(5vh + clamp(2rem, 4.5vw, 4.4rem) + 1.8rem);
-      left: 0;
-      right: 0;
-      display: flex;
-      justify-content: center;
-      z-index: 10;
-      pointer-events: none;
-      opacity: 0.28;
-      transition: opacity 0.6s ease;
-      animation: hintBob 2.2s ease-in-out infinite;
-    }
-
-    #scroll-hint svg {
-      width: 16px;
-      height: 16px;
-      fill: none;
-      stroke: #F0F0F8;
-      stroke-width: 1.5;
-    }
-
-    @keyframes hintBob {
-      0%, 100% { transform: translateY(0);   }
-      50%       { transform: translateY(5px); }
-    }
-
-    /* ============================================================
-       PROGRESS LINE — thin blue line growing up left edge
+       PROGRESS LINE — thin accent line growing up left edge
     ============================================================ */
     #progress-line {
       position: fixed;
@@ -161,8 +191,8 @@
       bottom: 0;
       width: 2px;
       height: 0%;
-      background: #4A90D9;
-      opacity: 0.45;
+      background: var(--accent);
+      opacity: 0.4;
       z-index: 10;
       transition: height 0.08s linear;
     }
@@ -171,21 +201,33 @@
 </head>
 <body>
 
+  <!-- Canvas fills the area below the title band -->
   <canvas id="seq-canvas"></canvas>
+
+  <!-- Bottom vignette for legibility -->
   <div id="vignette" aria-hidden="true"></div>
+
+  <!-- Progress line -->
   <div id="progress-line" aria-hidden="true"></div>
 
-  <div id="title">
+  <!-- Title band -->
+  <div id="title-band">
     <h1>Tyler Walters</h1>
   </div>
 
-  <div id="scroll-hint" aria-hidden="true">
-    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-      <polyline points="6 9 12 15 18 9"/>
-    </svg>
+  <!-- Bottom-left cluster: scroll arrows + ENTER -->
+  <div id="bottom-left">
+    <div id="scroll-arrows" aria-hidden="true">
+      <!-- Two chevrons suggest "scroll down" -->
+      <svg viewBox="0 0 20 12" xmlns="http://www.w3.org/2000/svg">
+        <polyline points="2 2 10 10 18 2"/>
+      </svg>
+      <svg viewBox="0 0 20 12" xmlns="http://www.w3.org/2000/svg">
+        <polyline points="2 2 10 10 18 2"/>
+      </svg>
+    </div>
+    <a href="about.html" id="enter-btn" aria-label="Enter site">Enter</a>
   </div>
-
-  <a href="about.html" id="enter-btn" aria-label="Enter site">Enter</a>
 
 
 <script>
@@ -198,9 +240,9 @@
   const FRAME_COUNT  = 120;
   const FRAME_PATH   = 'assets/skyty-frames/frame';
   const FRAME_EXT    = '.jpg';
-  const REVEAL_START = 0.5;    /* progress at which ENTER starts appearing */
-  const REVEAL_FULL  = 0.88;   /* progress at which ENTER is fully visible */
-  const SENSITIVITY  = 0.0007; /* scroll speed: lower = slower sequence */
+  const REVEAL_START = 0.45;   /* progress at which ENTER/arrows begin brightening */
+  const REVEAL_FULL  = 0.88;
+  const SENSITIVITY  = 0.0007;
 
   /* ----------------------------------------------------------
      ELEMENTS
@@ -208,7 +250,7 @@
   const canvas      = document.getElementById('seq-canvas');
   const ctx         = canvas.getContext('2d');
   const enterBtn    = document.getElementById('enter-btn');
-  const scrollHint  = document.getElementById('scroll-hint');
+  const arrows      = document.getElementById('scroll-arrows');
   const progressBar = document.getElementById('progress-line');
 
   /* ----------------------------------------------------------
@@ -222,29 +264,43 @@
   let firstLoaded  = false;
 
   /* ----------------------------------------------------------
-     CANVAS RESIZE
+     CANVAS SIZE
+     Matches the area below the title band.
   ---------------------------------------------------------- */
+  function getCanvasArea () {
+    const bandHeight = parseInt(
+      getComputedStyle(document.documentElement)
+        .getPropertyValue('--band-height')
+    ) || 64;
+    return {
+      w: window.innerWidth,
+      h: Math.max(window.innerHeight - canvas.offsetTop, 200)
+    };
+  }
+
   function resizeCanvas () {
-    canvas.width  = window.innerWidth;
-    canvas.height = window.innerHeight;
+    const { w, h } = getCanvasArea();
+    canvas.width  = w;
+    canvas.height = h;
     drawFrame(currentFrame);
   }
 
   window.addEventListener('resize', resizeCanvas, { passive: true });
-  resizeCanvas();
+
+  /* Wait for DOM to settle before first resize */
+  requestAnimationFrame(resizeCanvas);
 
   /* ----------------------------------------------------------
-     DRAW FRAME — cover scaling (like object-fit: cover)
+     DRAW — cover scaling
   ---------------------------------------------------------- */
   function drawFrame (index) {
     const img = frames[index];
-    if (!img) return;
+    if (!img || !img.naturalWidth) return;
 
     const cw = canvas.width;
     const ch = canvas.height;
     const iw = img.naturalWidth;
     const ih = img.naturalHeight;
-    if (!iw || !ih) return;
 
     const scale = Math.max(cw / iw, ch / ih);
     const sw = iw * scale;
@@ -267,6 +323,7 @@
       loadedCount++;
       if (!firstLoaded && idx === 0) {
         firstLoaded = true;
+        resizeCanvas();
         drawFrame(0);
       }
     };
@@ -278,22 +335,22 @@
      UI UPDATE
   ---------------------------------------------------------- */
   function updateUI () {
-    /* Progress line grows upward from bottom-left */
     progressBar.style.height = (progress * 100) + '%';
 
-    /* Scroll hint fades once interaction begins */
-    scrollHint.style.opacity = progress < 0.04 ? '0.28' : '0';
-
-    /* ENTER reveal */
     if (progress >= REVEAL_START) {
-      const t      = Math.min((progress - REVEAL_START) / (REVEAL_FULL - REVEAL_START), 1);
-      const op     = Math.max(0.18, t);
-      const scale  = 1 + t * 0.06;
-      enterBtn.style.opacity   = String(op);
-      enterBtn.style.transform = 'translateY(-50%) scale(' + scale + ')';
+      const t  = Math.min((progress - REVEAL_START) / (REVEAL_FULL - REVEAL_START), 1);
+      const op = Math.max(0.28, t);
+      enterBtn.style.opacity = String(op);
+      /* Arrows brighten early to prompt interaction, then fade slightly */
+      arrows.style.opacity = String(Math.min(0.28 + t * 0.5, 0.75));
+      /* Slightly larger ENTER as it reaches full visibility */
+      if (t > 0.85) {
+        enterBtn.style.fontSize = 'clamp(0.62rem, 0.9vw, 0.82rem)';
+      }
     } else {
-      enterBtn.style.opacity   = '0.18';
-      enterBtn.style.transform = 'translateY(-50%) scale(1)';
+      enterBtn.style.opacity = '0.28';
+      /* Arrows pulse gently at start to hint at interaction */
+      arrows.style.opacity = String(0.28 + Math.sin(Date.now() / 800) * 0.08);
     }
   }
 
@@ -312,7 +369,7 @@
   requestAnimationFrame(animate);
 
   /* ----------------------------------------------------------
-     INPUT — wheel, touch, keyboard
+     INPUT
   ---------------------------------------------------------- */
   function advanceByDelta (delta) {
     progress    = Math.min(Math.max(progress + delta * SENSITIVITY, 0), 1);
@@ -351,16 +408,16 @@
   });
 
   /* ----------------------------------------------------------
-     PLACEHOLDER if frames fail to load
+     PLACEHOLDER
   ---------------------------------------------------------- */
   setTimeout(function () {
     if (!firstLoaded) {
       const g = ctx.createRadialGradient(
-        canvas.width * 0.5, canvas.height * 0.42, 0,
-        canvas.width * 0.5, canvas.height * 0.42, canvas.width * 0.55
+        canvas.width * 0.5, canvas.height * 0.45, 0,
+        canvas.width * 0.5, canvas.height * 0.45, canvas.width * 0.5
       );
-      g.addColorStop(0,   'rgba(74,144,217,0.2)');
-      g.addColorStop(0.6, 'rgba(74,40,160,0.12)');
+      g.addColorStop(0,   'rgba(74,144,217,0.18)');
+      g.addColorStop(0.6, 'rgba(74,40,160,0.1)');
       g.addColorStop(1,   'rgba(20,0,48,0)');
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
