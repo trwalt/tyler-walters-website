@@ -856,6 +856,16 @@
   /* ----------------------------------------------------------
      RESIZE CANVAS
   ---------------------------------------------------------- */
+  
+  /* ----------------------------------------------------------
+     PRELOAD FRAMES
+     While loading, the canvas stays at 0 opacity (set in CSS).
+     Once the first frame loads we fade it in.
+  ---------------------------------------------------------- */
+  const frames = new Array(FRAME_COUNT);
+  let loadedCount = 0;
+  let currentFrame = 0;
+
   function resizeCanvas () {
     canvas.width  = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -866,15 +876,7 @@
 
   window.addEventListener('resize', resizeCanvas);
   resizeCanvas();
-
-  /* ----------------------------------------------------------
-     PRELOAD FRAMES
-     While loading, the canvas stays at 0 opacity (set in CSS).
-     Once the first frame loads we fade it in.
-  ---------------------------------------------------------- */
-  const frames = new Array(FRAME_COUNT);
-  let loadedCount = 0;
-  let currentFrame = 0;
+  
   let firstFrameLoaded = false;
 
   function padIndex (i) {
