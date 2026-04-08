@@ -6,377 +6,416 @@
   <title>Tyler Walters — About</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <style>
-    /* Page-specific overrides */
-    body { background: var(--ground); }
-  </style>
 </head>
 <body class="page">
 
-<!-- Ambient parallax background -->
+<!-- ============================================================
+     PARALLAX BACKGROUND — slow zoom on scroll
+============================================================ -->
 <div class="parallax-bg" aria-hidden="true">
+  <!--
+    Use a SkyTy frame showing hands about to release flour —
+    the moment just before the throw. Suggests "about."
+    Replace src with your chosen frame, e.g. assets/skyty-frames/frame030.jpg
+  -->
   <img class="parallax-bg-img"
-       src="assets/skyty-frames/frame040.jpg"
-       alt="">
+       src="assets/skyty-frames/frame030.jpg"
+       alt=""
+       id="bg-img">
 </div>
 
 <!-- ============================================================
-     TOP NAVIGATION
+     SITE HEADER — name + nav (shared across all inner pages)
 ============================================================ -->
-<nav class="nav-bar" aria-label="Site navigation">
-  <a href="index.html"  class="nav-item nav-home">Home</a>
-  <a href="about.html"  class="nav-item active"   aria-current="page">About</a>
-  <a href="work.html"   class="nav-item">Work</a>
-  <a href="contact.html" class="nav-item">Contact</a>
-  <a href="cv.html"     class="nav-item">CV</a>
-  <a href="press.html"  class="nav-item">Press</a>
-</nav>
-
-<!-- Sub-navigation: Statement / Bio -->
-<div class="sub-nav" id="sub-nav" aria-label="Section navigation">
-  <a href="#statement"
-     class="sub-nav-item left sub-active"
-     id="subnav-statement"
-     data-target="statement">Artist&nbsp;Statement/s</a>
-  <a href="#bio"
-     class="sub-nav-item sub-inactive"
-     id="subnav-bio"
-     data-target="bio">Bio</a>
-</div>
+<header class="site-header" id="site-header">
+  <span class="site-header-name" aria-hidden="true">Tyler Walters</span>
+  <nav class="nav-bar" aria-label="Site navigation">
+    <a href="index.html"   class="nav-item nav-home">home</a>
+    <a href="about.html"   class="nav-item active" aria-current="page">about</a>
+    <a href="work.html"    class="nav-item">work</a>
+    <a href="contact.html" class="nav-item">contact</a>
+    <a href="cv.html"      class="nav-item">cv</a>
+    <a href="press.html"   class="nav-item">press</a>
+  </nav>
+</header>
 
 <!-- ============================================================
-     ARTIST STATEMENT
+     ABOUT PAGE BODY
 ============================================================ -->
-<section class="statement-section about-page" id="statement" aria-labelledby="statement-heading">
+<div class="about-page" id="about-page">
 
-  <p class="section-title" id="statement-heading">Artist Statement/s</p>
+  <!-- Sub-navigation: stacked, active at bottom -->
+  <nav class="sub-nav" id="sub-nav" aria-label="Section navigation">
+    <!--
+      Order is controlled by CSS flex order:
+      sub-inactive gets order:1 (top), sub-active gets order:2 (bottom).
+      JS swaps the classes as the user scrolls.
+    -->
+    <a href="#statement"
+       class="sub-nav-item sub-active"
+       id="subnav-statement">Artist statement/s</a>
+    <a href="#bio"
+       class="sub-nav-item sub-inactive"
+       id="subnav-bio">Bio</a>
+  </nav>
 
-  <ul class="statement-list" aria-label="Artist statements">
+  <!-- ============================================================
+       ARTIST STATEMENT
+  ============================================================ -->
+  <section class="statement-section" id="statement" aria-labelledby="stmt-heading">
+    <p class="visually-hidden" id="stmt-heading">Artist Statement/s</p>
 
-    <li class="statement-item">
-      <span class="slash" aria-hidden="true">/</span>
-      <p class="statement-text">
-        <span class="line-1">Statements necessarily offer</span>
-        <span class="line-2">contingency, ambiguity, and opacity.</span>
-      </p>
-    </li>
+    <ul class="statement-list" aria-label="Artist statements">
 
-    <li class="statement-item">
-      <span class="slash" aria-hidden="true">/</span>
-      <p class="statement-text">
-        <span class="line-1">Dance is more than a language,</span>
-        <span class="line-2">but not in a way I think I can fully understand.</span>
-      </p>
-    </li>
+      <li class="statement-item">
+        <span class="slash" aria-hidden="true">/</span>
+        <p class="statement-text">
+          <span class="line-1">Statements necessarily offer</span>
+          <span class="line-2">contingency, ambiguity, and opacity.</span>
+        </p>
+      </li>
 
-    <li class="statement-item">
-      <span class="slash" aria-hidden="true">/</span>
-      <p class="statement-text">
-        <span class="line-1">The beginning is not</span>
-        <span class="line-2">The best place to start.</span>
-      </p>
-    </li>
+      <li class="statement-item">
+        <span class="slash" aria-hidden="true">/</span>
+        <p class="statement-text">
+          <span class="line-1">Dance is more than a language,</span>
+          <span class="line-2">but not in a way I think I can fully understand.</span>
+        </p>
+      </li>
 
-    <li class="statement-item">
-      <span class="slash" aria-hidden="true">/</span>
-      <p class="statement-text">
-        <span class="line-1">To produce a trace,</span>
-        <span class="line-2">I don't need to leave a mark.</span>
-      </p>
-    </li>
+      <li class="statement-item">
+        <span class="slash" aria-hidden="true">/</span>
+        <p class="statement-text">
+          <span class="line-1">The beginning is not</span>
+          <span class="line-2">The best place to start.</span>
+        </p>
+      </li>
 
-    <li class="statement-item">
-      <span class="slash" aria-hidden="true">/</span>
-      <p class="statement-text">
-        <span class="line-1">Everything is a sign of something else,</span>
-        <span class="line-2">except</span>
-      </p>
-    </li>
+      <li class="statement-item">
+        <span class="slash" aria-hidden="true">/</span>
+        <p class="statement-text">
+          <span class="line-1">To produce a trace,</span>
+          <span class="line-2">I don't need to leave a mark.</span>
+        </p>
+      </li>
 
-    <li class="statement-item">
-      <span class="slash" aria-hidden="true">/</span>
-      <p class="statement-text">
-        <span class="line-1">Objects on my screen are more distant (and less stable)</span>
-        <span class="line-2">than they appear.</span>
-      </p>
-    </li>
+      <li class="statement-item">
+        <span class="slash" aria-hidden="true">/</span>
+        <p class="statement-text">
+          <span class="line-1">Everything is a sign of something else,</span>
+          <span class="line-2">except</span>
+        </p>
+      </li>
 
-    <li class="statement-item">
-      <span class="slash" aria-hidden="true">/</span>
-      <p class="statement-text">
-        <span class="line-1">Boundaries are arbitrary,</span>
-        <span class="line-2">and those between movement, image, sound, and text mystify the senses.</span>
-      </p>
-    </li>
+      <li class="statement-item">
+        <span class="slash" aria-hidden="true">/</span>
+        <p class="statement-text">
+          <span class="line-1">Objects on my screen are more distant (and less stable)</span>
+          <span class="line-2">than they appear.</span>
+        </p>
+      </li>
 
-    <li class="statement-item">
-      <span class="slash" aria-hidden="true">/</span>
-      <p class="statement-text">
-        <span class="line-1">I prefer wandering around</span>
-        <span class="line-2">to wandering through.</span>
-      </p>
-    </li>
+      <li class="statement-item">
+        <span class="slash" aria-hidden="true">/</span>
+        <p class="statement-text">
+          <span class="line-1">Boundaries are arbitrary,</span>
+          <span class="line-2">and those between movement, image, sound, and text mystify the senses.</span>
+        </p>
+      </li>
 
-    <li class="statement-item">
-      <span class="slash" aria-hidden="true">/</span>
-      <p class="statement-text">
-        <span class="line-1">Stillness</span>
-        <span class="line-2">is the most compelling form of movement.</span>
-      </p>
-    </li>
+      <li class="statement-item">
+        <span class="slash" aria-hidden="true">/</span>
+        <p class="statement-text">
+          <span class="line-1">I prefer wandering around</span>
+          <span class="line-2">to wandering through.</span>
+        </p>
+      </li>
 
-    <li class="statement-item">
-      <span class="slash" aria-hidden="true">/</span>
-      <p class="statement-text">
-        <span class="line-1">I struggle to make a habit</span>
-        <span class="line-2">of inconsistency.</span>
-      </p>
-    </li>
+      <li class="statement-item">
+        <span class="slash" aria-hidden="true">/</span>
+        <p class="statement-text">
+          <span class="line-1">Stillness</span>
+          <span class="line-2">is the most compelling form of movement.</span>
+        </p>
+      </li>
 
-    <li class="statement-item">
-      <span class="slash" aria-hidden="true">/</span>
-      <p class="statement-text">
-        <span class="line-1">Failure</span>
-        <span class="line-2">is an aesthetic choice.</span>
-      </p>
-    </li>
+      <li class="statement-item">
+        <span class="slash" aria-hidden="true">/</span>
+        <p class="statement-text">
+          <span class="line-1">I struggle to make a habit</span>
+          <span class="line-2">of inconsistency.</span>
+        </p>
+      </li>
 
-    <li class="statement-item">
-      <span class="slash" aria-hidden="true">/</span>
-      <p class="statement-text">
-        <span class="line-1">Improvising reinvents my future</span>
-        <span class="line-2">in my present through my past.</span>
-      </p>
-    </li>
+      <li class="statement-item">
+        <span class="slash" aria-hidden="true">/</span>
+        <p class="statement-text">
+          <span class="line-1">Failure</span>
+          <span class="line-2">is an aesthetic choice.</span>
+        </p>
+      </li>
 
-    <li class="statement-item">
-      <span class="slash" aria-hidden="true">/</span>
-      <p class="statement-text">
-        <span class="line-1">Blue is more than</span>
-        <span class="line-2">just a color.</span>
-      </p>
-    </li>
+      <li class="statement-item">
+        <span class="slash" aria-hidden="true">/</span>
+        <p class="statement-text">
+          <span class="line-1">Improvising reinvents my future</span>
+          <span class="line-2">in my present through my past.</span>
+        </p>
+      </li>
 
-    <li class="statement-item">
-      <span class="slash" aria-hidden="true">/</span>
-      <p class="statement-text">
-        <span class="line-1">I try to make it</span>
-        <span class="line-2">my <em>self</em>.</span>
-      </p>
-    </li>
+      <li class="statement-item">
+        <span class="slash" aria-hidden="true">/</span>
+        <p class="statement-text">
+          <span class="line-1">Blue is more than</span>
+          <span class="line-2">just a color.</span>
+        </p>
+      </li>
 
-    <li class="statement-item">
-      <span class="slash" aria-hidden="true">/</span>
-      <p class="statement-text">
-        <span class="line-1">Self contradiction is to be expected</span>
-        <span class="line-2">— especially here in America.</span>
-      </p>
-    </li>
+      <li class="statement-item">
+        <span class="slash" aria-hidden="true">/</span>
+        <p class="statement-text">
+          <span class="line-1">I try to make it</span>
+          <span class="line-2">my <em>self</em>.</span>
+        </p>
+      </li>
 
-    <li class="statement-item">
-      <span class="slash" aria-hidden="true">/</span>
-      <p class="statement-text">
-        <span class="line-1">My complicity is inevitable</span>
-        <span class="line-2">— and thus critical.</span>
-      </p>
-    </li>
+      <li class="statement-item">
+        <span class="slash" aria-hidden="true">/</span>
+        <p class="statement-text">
+          <span class="line-1">Self contradiction is to be expected</span>
+          <span class="line-2">— especially here in America.</span>
+        </p>
+      </li>
 
-    <li class="statement-item">
-      <span class="slash" aria-hidden="true">/</span>
-      <p class="statement-text">
-        <span class="line-1">The art's politics</span>
-        <span class="line-2">should exceed the artist's.</span>
-      </p>
-    </li>
+      <li class="statement-item">
+        <span class="slash" aria-hidden="true">/</span>
+        <p class="statement-text">
+          <span class="line-1">My complicity is inevitable</span>
+          <span class="line-2">— and thus critical.</span>
+        </p>
+      </li>
 
-    <li class="statement-item">
-      <span class="slash" aria-hidden="true">/</span>
-      <p class="statement-text">
-        <span class="line-1">If my experimentation succeeds, something should shift,</span>
-        <span class="line-2">even if I can't quite name it.</span>
-      </p>
-    </li>
+      <li class="statement-item">
+        <span class="slash" aria-hidden="true">/</span>
+        <p class="statement-text">
+          <span class="line-1">The art's politics</span>
+          <span class="line-2">should exceed the artist's.</span>
+        </p>
+      </li>
 
-    <li class="statement-item">
-      <span class="slash" aria-hidden="true">/</span>
-      <p class="statement-text">
-        <span class="line-1">Authenticity is mostly a comfortable illusion</span>
-        <span class="line-2">— better to be uncomfortable.</span>
-      </p>
-    </li>
+      <li class="statement-item">
+        <span class="slash" aria-hidden="true">/</span>
+        <p class="statement-text">
+          <span class="line-1">If my experimentation succeeds, something should shift,</span>
+          <span class="line-2">even if I can't quite name it.</span>
+        </p>
+      </li>
 
-    <li class="statement-item">
-      <span class="slash" aria-hidden="true">/</span>
-      <p class="statement-text">
-        <span class="line-1">Indeterminate algorithms compel my recorded images and live movement</span>
-        <span class="line-2">to surprise each other.</span>
-      </p>
-    </li>
+      <li class="statement-item">
+        <span class="slash" aria-hidden="true">/</span>
+        <p class="statement-text">
+          <span class="line-1">Authenticity is mostly a comfortable illusion</span>
+          <span class="line-2">— better to be uncomfortable.</span>
+        </p>
+      </li>
 
-    <li class="statement-item">
-      <span class="slash" aria-hidden="true">/</span>
-      <p class="statement-text">
-        <span class="line-1">Randomness is evidence</span>
-        <span class="line-2">that there is always a chance.</span>
-      </p>
-    </li>
+      <li class="statement-item">
+        <span class="slash" aria-hidden="true">/</span>
+        <p class="statement-text">
+          <span class="line-1">Indeterminate algorithms compel my recorded images and live movement</span>
+          <span class="line-2">to surprise each other.</span>
+        </p>
+      </li>
 
-    <li class="statement-item">
-      <span class="slash" aria-hidden="true">/</span>
-      <p class="statement-text">
-        <span class="line-1">My means should resist</span>
-        <span class="line-2">my end(s).</span>
-      </p>
-    </li>
+      <li class="statement-item">
+        <span class="slash" aria-hidden="true">/</span>
+        <p class="statement-text">
+          <span class="line-1">Randomness is evidence</span>
+          <span class="line-2">that there is always a chance.</span>
+        </p>
+      </li>
 
-    <li class="statement-item">
-      <span class="slash" aria-hidden="true">/</span>
-      <p class="statement-text">
-        <span class="line-1">Embodiment is the problem, the solution,</span>
-        <span class="line-2">and always a question.</span>
-      </p>
-    </li>
+      <li class="statement-item">
+        <span class="slash" aria-hidden="true">/</span>
+        <p class="statement-text">
+          <span class="line-1">My means should resist</span>
+          <span class="line-2">my end(s).</span>
+        </p>
+      </li>
 
-    <li class="statement-item">
-      <span class="slash" aria-hidden="true">/</span>
-      <p class="statement-text">
-        <span class="line-1">I can count</span>
-        <span class="line-2">higher than one.</span>
-      </p>
-    </li>
+      <li class="statement-item">
+        <span class="slash" aria-hidden="true">/</span>
+        <p class="statement-text">
+          <span class="line-1">Embodiment is the problem, the solution,</span>
+          <span class="line-2">and always a question.</span>
+        </p>
+      </li>
 
-    <li class="statement-item">
-      <span class="slash" aria-hidden="true">/</span>
-      <p class="statement-text">
-        <span class="line-1">Repetition is the only path</span>
-        <span class="line-2">toward change.</span>
-      </p>
-    </li>
+      <li class="statement-item">
+        <span class="slash" aria-hidden="true">/</span>
+        <p class="statement-text">
+          <span class="line-1">I can count</span>
+          <span class="line-2">higher than one.</span>
+        </p>
+      </li>
 
-    <li class="statement-item">
-      <span class="slash" aria-hidden="true">/</span>
-      <p class="statement-text">
-        <span class="line-1">My situation</span>
-        <span class="line-2">requires action.</span>
-      </p>
-    </li>
+      <li class="statement-item">
+        <span class="slash" aria-hidden="true">/</span>
+        <p class="statement-text">
+          <span class="line-1">Repetition is the only path</span>
+          <span class="line-2">toward change.</span>
+        </p>
+      </li>
 
-  </ul><!-- end statement-list -->
+      <li class="statement-item">
+        <span class="slash" aria-hidden="true">/</span>
+        <p class="statement-text">
+          <span class="line-1">My situation</span>
+          <span class="line-2">requires action.</span>
+        </p>
+      </li>
 
-  <!-- Final unmoored line — outside the list, no bullet -->
-  <p class="statement-final">The project is always unfinished.</p>
+    </ul>
 
-</section>
+    <!-- Final unmoored line — same grid rhythm, no slash, no second line -->
+    <div class="statement-final" aria-label="Final statement">
+      <span class="slash-empty" aria-hidden="true"></span>
+      <span class="final-text">The project is always unfinished.</span>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
+       BIO
+  ============================================================ -->
+  <section class="bio-section" id="bio" aria-labelledby="bio-heading">
+
+    <p class="section-title" id="bio-heading">Bio</p>
+    <div class="accent-rule"></div>
+
+    <div class="bio-text">
+
+      <p>Tyler Walters spent nearly four decades in professional ballet — as a leading dancer
+      with the Joffrey Ballet and subsequently as an educator and award-winning choreographer —
+      before rupturing with almost everything that tradition embodies. His current work engages
+      the tensions between materiality and virtuality, presence and absence, language and the
+      body's resistance to it, merging improvisational movement with algorithmically processed
+      video and sound to interrogate the American capitalist myth of the sovereign,
+      self-determining individual.</p>
+
+      <p>That rupture found its form at Hollins University, where Walters earned an MFA in Dance
+      in 2017. There he began developing a praxis grounded in theoretical research, personal
+      excavation, social self-implication, and formal experimentation. His thesis performance,
+      <em>notwhatiusedtobe</em>, a live performance and media installation exploring identity,
+      memory, and change through the Narcissus myth and ephemeral projection onto falling water,
+      established the research agenda that continues to drive his work: the unstable self, the
+      journey as both physical and psychic proposition, the critique embedded in and through his
+      complicit white American embodiment.</p>
+
+      <p>Since then, Walters has pursued this agenda across two primary modes of working. He
+      continues to develop <em>The Elusive Self</em>, an ongoing series of solo video
+      installations in which algorithmically controlled playback generates multiple simultaneous
+      instances of the same recorded movement — durational rather than looped, without
+      predetermined beginning, middle, or end — quietly dismantling the illusion of a singular,
+      coherent self. Works in the series, including <em>Kitchen Pas de Deux</em> (2020),
+      <em>auto/mobile</em> (2023), and <em>Unsettler: go back where you came from /
+      Hydrologic Cycle #2</em> (2022), have been presented in intimate venues in Chapel Hill
+      and Durham, NC, as well as in virtual installations online. In parallel, under the
+      collaborative appellation Negative Mirror — taken from Italo Calvino's
+      <em>Invisible Cities</em> — Walters and co-director Killian Manning have created a series
+      of intermedial performance events that bring together live movement improvisation,
+      algorithmically manipulated video and sound, spoken text, and immersive installation.
+      Their most recent work, <em>Forces of Habit</em> (2026), a three-part performance
+      examining the social, pathological, and potentially liberatory dimensions of habitual
+      behavior, was presented in Chapel Hill, NC.</p>
+
+      <p>Across both modes, recurring concerns surface and resurface: embodiment as site of
+      social critique, the journey as metaphor for psychic and political becoming, the narcissism
+      embedded in American self-fashioning, and the productive instability of meaning in a
+      culture that prefers its certainties undisturbed. Walters makes his work himself —
+      developing algorithms, building soundscapes, making and editing video, constructing
+      physical installations, and performing in almost everything he makes — finding that
+      fluency across media is vital to the integrity of the work.</p>
+
+      <p>He remains Associate Professor of the Practice Emeritus of Dance at Duke University,
+      based in the Research Triangle area of North Carolina.</p>
+
+    </div>
+
+  </section>
+
+</div><!-- end about-page -->
+
 
 <!-- ============================================================
-     BIO
-============================================================ -->
-<section class="bio-section" id="bio" aria-labelledby="bio-heading">
-
-  <p class="section-title" id="bio-heading">Bio</p>
-  <div class="accent-rule"></div>
-
-  <div class="bio-text">
-
-    <p>Tyler Walters spent nearly four decades in professional ballet — as a leading dancer
-    with the Joffrey Ballet and subsequently as an educator and award-winning choreographer —
-    before rupturing with almost everything that tradition embodies. His current work engages
-    the tensions between materiality and virtuality, presence and absence, language and the
-    body's resistance to it, merging improvisational movement with algorithmically processed
-    video and sound to interrogate the American capitalist myth of the sovereign,
-    self-determining individual.</p>
-
-    <p>That rupture found its form at Hollins University, where Walters earned an MFA in Dance
-    in 2017. There he began developing a praxis grounded in theoretical research, personal
-    excavation, social self-implication, and formal experimentation. His thesis performance,
-    <em>notwhatiusedtobe</em>, a live performance and media installation exploring identity,
-    memory, and change through the Narcissus myth and ephemeral projection onto falling water,
-    established the research agenda that continues to drive his work: the unstable self, the
-    journey as both physical and psychic proposition, the critique embedded in and through his
-    complicit white American embodiment.</p>
-
-    <p>Since then, Walters has pursued this agenda across two primary modes of working. He
-    continues to develop <em>The Elusive Self</em>, an ongoing series of solo video
-    installations in which algorithmically controlled playback generates multiple simultaneous
-    instances of the same recorded movement — durational rather than looped, without
-    predetermined beginning, middle, or end — quietly dismantling the illusion of a singular,
-    coherent self. Works in the series, including <em>Kitchen Pas de Deux</em> (2020),
-    <em>auto/mobile</em> (2023), and <em>Unsettler: go back where you came from /
-    Hydrologic Cycle #2</em> (2022), have been presented in intimate venues in Chapel Hill
-    and Durham, NC, as well as in virtual installations online. In parallel, under the
-    collaborative appellation Negative Mirror — taken from Italo Calvino's
-    <em>Invisible Cities</em> — Walters and co-director Killian Manning have created a series
-    of intermedial performance events that bring together live movement improvisation,
-    algorithmically manipulated video and sound, spoken text, and immersive installation.
-    Their most recent work, <em>Forces of Habit</em> (2026), a three-part performance
-    examining the social, pathological, and potentially liberatory dimensions of habitual
-    behavior, was presented in Chapel Hill, NC.</p>
-
-    <p>Across both modes, recurring concerns surface and resurface: embodiment as site of
-    social critique, the journey as metaphor for psychic and political becoming, the narcissism
-    embedded in American self-fashioning, and the productive instability of meaning in a
-    culture that prefers its certainties undisturbed. Walters makes his work himself —
-    developing algorithms, building soundscapes, making and editing video, constructing
-    physical installations, and performing in almost everything he makes — finding that
-    fluency across media is vital to the integrity of the work.</p>
-
-    <p>He remains Associate Professor of the Practice Emeritus of Dance at Duke University,
-    based in the Research Triangle area of North Carolina.</p>
-
-  </div>
-
-</section>
-
-
-<!-- ============================================================
-     JAVASCRIPT — SUB-NAV SCROLL BEHAVIOR + PARALLAX
+     JAVASCRIPT
 ============================================================ -->
 <script>
 (function () {
   'use strict';
 
   /* ----------------------------------------------------------
-     SUB-NAV: watch which section is in view and switch styles
+     MEASURE HEADER HEIGHT and set CSS variable
+     This keeps all sticky positioning accurate regardless of
+     how the header renders at different screen sizes.
+  ---------------------------------------------------------- */
+  function setHeaderHeight () {
+    const h = document.getElementById('site-header').offsetHeight;
+    document.documentElement.style.setProperty('--header-h', h + 'px');
+    /* Also update sub-nav top to sit flush below header */
+    document.getElementById('sub-nav').style.top = h + 'px';
+  }
+
+  setHeaderHeight();
+  window.addEventListener('resize', setHeaderHeight, { passive: true });
+
+  /* ----------------------------------------------------------
+     SUB-NAV: swap active/inactive as sections scroll into view
   ---------------------------------------------------------- */
   const statementEl = document.getElementById('statement');
   const bioEl       = document.getElementById('bio');
   const navStmt     = document.getElementById('subnav-statement');
   const navBio      = document.getElementById('subnav-bio');
 
-  function setActive (section) {
+  function setSubActive (section) {
     if (section === 'statement') {
       navStmt.classList.replace('sub-inactive', 'sub-active');
-      navStmt.classList.add('left');
-      navBio.classList.replace('sub-active', 'sub-inactive');
+      navBio.classList.replace('sub-active',   'sub-inactive');
     } else {
-      navBio.classList.replace('sub-inactive', 'sub-active');
-      navStmt.classList.replace('sub-active', 'sub-inactive');
-      navStmt.classList.remove('left');
+      navBio.classList.replace('sub-inactive',  'sub-active');
+      navStmt.classList.replace('sub-active',  'sub-inactive');
     }
   }
 
-  const observer = new IntersectionObserver(function (entries) {
+  const sectionObserver = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
       if (entry.isIntersecting) {
-        setActive(entry.target.id);
+        setSubActive(entry.target.id);
       }
     });
-  }, { threshold: 0.3 });
+  }, {
+    /* Trigger when section top crosses 40% of viewport height */
+    rootMargin: '-40% 0px -40% 0px',
+    threshold: 0
+  });
 
-  observer.observe(statementEl);
-  observer.observe(bioEl);
+  sectionObserver.observe(statementEl);
+  sectionObserver.observe(bioEl);
 
   /* ----------------------------------------------------------
-     PARALLAX BACKGROUND — slow drift tied to scroll
+     BACKGROUND IMAGE — slow zoom on scroll
   ---------------------------------------------------------- */
-  const bgImg = document.querySelector('.parallax-bg-img');
+  const bgImg = document.getElementById('bg-img');
 
   window.addEventListener('scroll', function () {
     const scrolled = window.scrollY;
-    const shift    = scrolled * 0.015;
-    bgImg.style.transform = 'translate(-' + (10 - shift) + '%, -' + (10 - shift * 0.5) + '%) scale(1.05)';
+    const maxScroll = document.body.scrollHeight - window.innerHeight;
+    const progress = Math.min(scrolled / maxScroll, 1);
+    /* Scale from 1.05 (no scroll) to 1.22 (full scroll) */
+    const scale = 1.05 + progress * 0.17;
+    bgImg.style.transform = 'scale(' + scale + ')';
   }, { passive: true });
 
 })();
