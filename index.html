@@ -9,42 +9,30 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
   <style>
 
-    /* ============================================================
-       RESET & BASE
-    ============================================================ */
     *, *::before, *::after {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
 
+    :root {
+      --ground:      #140030;
+      --text:        #F0F0F8;
+      --accent:      #4A90D9;
+      /* Title band height — enough for the larger italic title */
+      --band-height: clamp(64px, 10vw, 120px);
+    }
+
     html, body {
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background: #140030;
+      background: var(--ground);
       font-family: 'Inter', sans-serif;
-      /* Minimum height: preserves enough image to be meaningful */
-      min-height: 320px;
     }
 
     /* ============================================================
-       LAYOUT STRUCTURE
-       Two rows:
-         1. Title band  — fixed height, ground color
-         2. Canvas area — remaining height, image fills it
-    ============================================================ */
-
-    /* The title band height — adjust this value to taste */
-    :root {
-      --band-height: clamp(52px, 8vh, 80px);
-      --ground:      #140030;
-      --text:        #F0F0F8;
-      --accent:      #4A90D9;
-    }
-
-    /* ============================================================
-       TITLE BAND — solid ground color, full width
+       TITLE BAND — solid ground color strip at top
     ============================================================ */
     #title-band {
       position: fixed;
@@ -57,40 +45,65 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      /* Padding above text = good; no hard padding below (gradient handles it) */
+      padding-top: 0.3em;
     }
 
     #title-band h1 {
       font-family: 'Inter', sans-serif;
       font-weight: 100;
       font-style: italic;
-      font-size: clamp(1.4rem, 3.2vw, 3.2rem);
+      /* Roughly double the previous size relative to viewport width */
+      font-size: clamp(2rem, 6.5vw, 7rem);
       letter-spacing: 0.28em;
       color: var(--text);
       line-height: 1;
       text-transform: none;
       user-select: none;
+      white-space: nowrap;
+    }
+
+    /* Gradient fade at bottom of title band — softens the hard edge */
+    #band-fade {
+      position: fixed;
+      top: var(--band-height);
+      left: 0;
+      right: 0;
+      height: clamp(24px, 4vw, 52px);
+      background: linear-gradient(
+        to bottom,
+        var(--ground) 0%,
+        rgba(20, 0, 48, 0) 100%
+      );
+      z-index: 15;
+      pointer-events: none;
     }
 
     /* ============================================================
-       CANVAS — fills everything below the title band
-       Never moves. Image covers this area.
+       CANVAS
+       Positioned below the title band.
+       min-height enforces 16:9 relative to viewport width so
+       the image never elongates when the window is squeezed.
+       The body overflow:hidden clips anything below the viewport.
     ============================================================ */
     #seq-canvas {
       position: fixed;
       top: var(--band-height);
       left: 0;
       width: 100vw;
-      /* Height = viewport minus the title band */
+      /*
+        Normal height fills remaining viewport.
+        Minimum height = 16:9 of viewport width, so shrinking the
+        window vertically never squashes the image — it just clips
+        the bottom (body overflow:hidden handles that cleanly).
+      */
       height: calc(100vh - var(--band-height));
+      min-height: calc(100vw * 9 / 16);
       display: block;
-      /* Enforce minimum aspect ratio: if window is too short,
-         canvas maintains 16:9 minimum and overflows (hidden by body) */
-      min-height: calc((100vw) * 9 / 16);
     }
 
     /* ============================================================
-       SUBTLE BOTTOM VIGNETTE
-       Just slightly darkens bottom edge so ENTER is legible
+       BOTTOM VIGNETTE — darkens bottom edge for legibility
     ============================================================ */
     #vignette {
       position: fixed;
@@ -103,15 +116,14 @@
       background: linear-gradient(
         to bottom,
         rgba(20, 0, 48, 0.0)  0%,
-        rgba(20, 0, 48, 0.0)  70%,
-        rgba(20, 0, 48, 0.65) 100%
+        rgba(20, 0, 48, 0.0)  65%,
+        rgba(20, 0, 48, 0.70) 100%
       );
     }
 
     /* ============================================================
        BOTTOM-LEFT CLUSTER
-       Contains: two scroll arrows + ENTER button
-       Sits in the consistently dark bottom area
+       ENTER button with chevrons to its right
     ============================================================ */
     #bottom-left {
       position: fixed;
@@ -119,67 +131,65 @@
       left: 4vw;
       z-index: 10;
       display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.6rem;
-    }
-
-    /* Scroll arrows — two chevrons stacked, prompt the visitor to scroll */
-    #scroll-arrows {
-      display: flex;
-      flex-direction: column;
+      flex-direction: row;      /* horizontal: button then arrows */
       align-items: center;
-      gap: 0.15rem;
-      opacity: 0.28;   /* starts faint, brightens slightly on scroll */
-      transition: opacity 0.5s ease;
-      pointer-events: none;
-      margin-left: 0.4rem;  /* align roughly with ENTER text */
+      gap: 1rem;
     }
 
-    #scroll-arrows svg {
-      width: 14px;
-      height: 10px;
-      fill: none;
-      stroke: var(--text);
-      stroke-width: 1.5;
-      animation: arrowBob 1.8s ease-in-out infinite;
-    }
-
-    #scroll-arrows svg:nth-child(2) {
-      animation-delay: 0.2s;
-      opacity: 0.6;
-    }
-
-    @keyframes arrowBob {
-      0%, 100% { transform: translateY(0);   }
-      50%       { transform: translateY(3px); }
-    }
-
-    /* ENTER button — horizontal, bottom left */
+    /* ENTER button */
     #enter-btn {
       display: inline-block;
       font-family: 'Inter', sans-serif;
-      font-size: clamp(0.6rem, 0.85vw, 0.78rem);
+      font-size: clamp(0.72rem, 1.1vw, 1rem);   /* ~50% larger than before */
       font-weight: 300;
       letter-spacing: 0.52em;
       text-transform: uppercase;
-      writing-mode: horizontal-tb;   /* normal horizontal text */
-      text-orientation: mixed;
       color: var(--text);
       text-decoration: none;
       background: transparent;
-      border: 1px solid rgba(240, 240, 248, 0.28);
-      padding: 0.65em 2em;
-      /* Slightly more visible at start than before */
-      opacity: 0.28;
-      transition: opacity 0.5s ease, border-color 0.4s ease,
-                  color 0.4s ease, font-size 0.3s ease;
+      border: 1px solid rgba(240, 240, 248, 0.38);
+      padding: 0.75em 2.2em;
+      opacity: 0.35;            /* more visible at start */
+      transition: opacity 0.5s ease, border-color 0.4s ease, color 0.4s ease;
     }
 
     #enter-btn:hover {
       opacity: 1 !important;
       border-color: var(--accent);
       color: var(--accent);
+    }
+
+    /* Chevrons — to the right of ENTER button */
+    #scroll-arrows {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.1rem;
+      opacity: 0.35;            /* matches ENTER starting opacity */
+      transition: opacity 0.5s ease;
+      pointer-events: none;
+    }
+
+    #scroll-arrows svg {
+      width: 16px;
+      height: 11px;
+      fill: none;
+      stroke: var(--text);
+      stroke-width: 1.5;
+    }
+
+    #scroll-arrows svg:nth-child(1) {
+      animation: arrowBob 1.8s ease-in-out infinite;
+    }
+    #scroll-arrows svg:nth-child(2) {
+      animation: arrowBob 1.8s ease-in-out infinite;
+      animation-delay: 0.22s;
+      opacity: 0.65;
+    }
+
+    @keyframes arrowBob {
+      0%, 100% { transform: translateY(0);   }
+      50%       { transform: translateY(4px); }
     }
 
     /* ============================================================
@@ -194,39 +204,33 @@
       background: var(--accent);
       opacity: 0.4;
       z-index: 10;
-      transition: height 0.08s linear;
     }
 
   </style>
 </head>
 <body>
 
-  <!-- Canvas fills the area below the title band -->
   <canvas id="seq-canvas"></canvas>
-
-  <!-- Bottom vignette for legibility -->
-  <div id="vignette" aria-hidden="true"></div>
-
-  <!-- Progress line -->
+  <div id="vignette"      aria-hidden="true"></div>
   <div id="progress-line" aria-hidden="true"></div>
 
-  <!-- Title band -->
+  <!-- Title band with gradient fade below it -->
   <div id="title-band">
     <h1>Tyler Walters</h1>
   </div>
+  <div id="band-fade" aria-hidden="true"></div>
 
-  <!-- Bottom-left cluster: scroll arrows + ENTER -->
+  <!-- ENTER + chevrons in a row -->
   <div id="bottom-left">
+    <a href="about.html" id="enter-btn" aria-label="Enter site">Enter</a>
     <div id="scroll-arrows" aria-hidden="true">
-      <!-- Two chevrons suggest "scroll down" -->
-      <svg viewBox="0 0 20 12" xmlns="http://www.w3.org/2000/svg">
-        <polyline points="2 2 10 10 18 2"/>
+      <svg viewBox="0 0 20 11" xmlns="http://www.w3.org/2000/svg">
+        <polyline points="2 2 10 9 18 2"/>
       </svg>
-      <svg viewBox="0 0 20 12" xmlns="http://www.w3.org/2000/svg">
-        <polyline points="2 2 10 10 18 2"/>
+      <svg viewBox="0 0 20 11" xmlns="http://www.w3.org/2000/svg">
+        <polyline points="2 2 10 9 18 2"/>
       </svg>
     </div>
-    <a href="about.html" id="enter-btn" aria-label="Enter site">Enter</a>
   </div>
 
 
@@ -240,7 +244,7 @@
   const FRAME_COUNT  = 120;
   const FRAME_PATH   = 'assets/skyty-frames/frame';
   const FRAME_EXT    = '.jpg';
-  const REVEAL_START = 0.45;   /* progress at which ENTER/arrows begin brightening */
+  const REVEAL_START = 0.45;
   const REVEAL_FULL  = 0.88;
   const SENSITIVITY  = 0.0007;
 
@@ -257,41 +261,36 @@
      STATE
   ---------------------------------------------------------- */
   const frames     = new Array(FRAME_COUNT).fill(null);
-  let loadedCount  = 0;
   let currentFrame = 0;
   let targetFrame  = 0;
   let progress     = 0;
   let firstLoaded  = false;
 
   /* ----------------------------------------------------------
-     CANVAS SIZE
-     Matches the area below the title band.
+     CANVAS RESIZE
+     Width  = full viewport width
+     Height = max(viewport - band, 16:9 of viewport width)
+     This prevents vertical squashing: when the window is too
+     short, the canvas extends below the viewport (clipped by
+     body overflow:hidden) rather than compressing the image.
   ---------------------------------------------------------- */
-  function getCanvasArea () {
-    const bandHeight = parseInt(
-      getComputedStyle(document.documentElement)
-        .getPropertyValue('--band-height')
-    ) || 64;
-    return {
-      w: window.innerWidth,
-      h: Math.max(window.innerHeight - canvas.offsetTop, 200)
-    };
-  }
-
   function resizeCanvas () {
-    const { w, h } = getCanvasArea();
-    canvas.width  = w;
-    canvas.height = h;
+    const bandH    = canvas.offsetTop;   /* matches CSS --band-height */
+    const viewH    = window.innerHeight;
+    const viewW    = window.innerWidth;
+    const minH     = viewW * 9 / 16;    /* 16:9 minimum */
+    const targetH  = Math.max(viewH - bandH, minH);
+
+    canvas.width  = viewW;
+    canvas.height = targetH;
     drawFrame(currentFrame);
   }
 
   window.addEventListener('resize', resizeCanvas, { passive: true });
-
-  /* Wait for DOM to settle before first resize */
   requestAnimationFrame(resizeCanvas);
 
   /* ----------------------------------------------------------
-     DRAW — cover scaling
+     DRAW — cover scaling, image centred
   ---------------------------------------------------------- */
   function drawFrame (index) {
     const img = frames[index];
@@ -320,14 +319,12 @@
     const idx = i;
     img.onload = function () {
       frames[idx] = img;
-      loadedCount++;
       if (!firstLoaded && idx === 0) {
         firstLoaded = true;
         resizeCanvas();
-        drawFrame(0);
       }
     };
-    img.onerror = function () { loadedCount++; };
+    img.onerror = function () {};
     img.src = FRAME_PATH + String(i + 1).padStart(3, '0') + FRAME_EXT;
   }
 
@@ -339,18 +336,12 @@
 
     if (progress >= REVEAL_START) {
       const t  = Math.min((progress - REVEAL_START) / (REVEAL_FULL - REVEAL_START), 1);
-      const op = Math.max(0.28, t);
+      const op = Math.max(0.35, t);
       enterBtn.style.opacity = String(op);
-      /* Arrows brighten early to prompt interaction, then fade slightly */
-      arrows.style.opacity = String(Math.min(0.28 + t * 0.5, 0.75));
-      /* Slightly larger ENTER as it reaches full visibility */
-      if (t > 0.85) {
-        enterBtn.style.fontSize = 'clamp(0.62rem, 0.9vw, 0.82rem)';
-      }
+      arrows.style.opacity   = String(Math.min(0.35 + t * 0.5, 0.9));
     } else {
-      enterBtn.style.opacity = '0.28';
-      /* Arrows pulse gently at start to hint at interaction */
-      arrows.style.opacity = String(0.28 + Math.sin(Date.now() / 800) * 0.08);
+      enterBtn.style.opacity = '0.35';
+      arrows.style.opacity   = '0.35';
     }
   }
 
@@ -417,7 +408,7 @@
         canvas.width * 0.5, canvas.height * 0.45, canvas.width * 0.5
       );
       g.addColorStop(0,   'rgba(74,144,217,0.18)');
-      g.addColorStop(0.6, 'rgba(74,40,160,0.1)');
+      g.addColorStop(0.6, 'rgba(74,40,160,0.10)');
       g.addColorStop(1,   'rgba(20,0,48,0)');
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
