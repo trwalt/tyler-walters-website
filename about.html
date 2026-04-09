@@ -11,15 +11,8 @@
 </head>
 <body class="page">
 
-<!-- ============================================================
-     PARALLAX BACKGROUND — slow zoom on scroll
-============================================================ -->
+<!-- Parallax background — brighter, unblurred -->
 <div class="parallax-bg" aria-hidden="true">
-  <!--
-    Use a SkyTy frame showing hands about to release flour —
-    the moment just before the throw. Suggests "about."
-    Replace src with your chosen frame, e.g. assets/skyty-frames/frame030.jpg
-  -->
   <img class="parallax-bg-img"
        src="assets/skyty-frames/frame030.jpg"
        alt=""
@@ -27,7 +20,7 @@
 </div>
 
 <!-- ============================================================
-     SITE HEADER — name + nav (shared across all inner pages)
+     SITE HEADER
 ============================================================ -->
 <header class="site-header" id="site-header">
   <span class="site-header-name" aria-hidden="true">Tyler Walters</span>
@@ -42,20 +35,22 @@
 </header>
 
 <!-- ============================================================
-     ABOUT PAGE BODY
+     ABOUT PAGE
 ============================================================ -->
 <div class="about-page" id="about-page">
 
-  <!-- Sub-navigation: stacked, active at bottom -->
+  <!--
+    Sub-nav is sticky, positioned via JS to sit flush below header.
+    Content scrolls behind it — the ::after gradient fades statements out.
+  -->
   <nav class="sub-nav" id="sub-nav" aria-label="Section navigation">
     <!--
-      Order is controlled by CSS flex order:
-      sub-inactive gets order:1 (top), sub-active gets order:2 (bottom).
-      JS swaps the classes as the user scrolls.
+      CSS flex order: sub-inactive = order 1 (top), sub-active = order 2 (bottom).
+      JS swaps classes as user scrolls between sections.
     -->
     <a href="#statement"
        class="sub-nav-item sub-active"
-       id="subnav-statement">Artist statement/s</a>
+       id="subnav-statement">Artist Statement/s</a>
     <a href="#bio"
        class="sub-nav-item sub-inactive"
        id="subnav-bio">Bio</a>
@@ -64,8 +59,7 @@
   <!-- ============================================================
        ARTIST STATEMENT
   ============================================================ -->
-  <section class="statement-section" id="statement" aria-labelledby="stmt-heading">
-    <p class="visually-hidden" id="stmt-heading">Artist Statement/s</p>
+  <section class="statement-section" id="statement">
 
     <ul class="statement-list" aria-label="Artist statements">
 
@@ -88,8 +82,9 @@
       <li class="statement-item">
         <span class="slash" aria-hidden="true">/</span>
         <p class="statement-text">
+          <!-- fixed: lowercase "the" on line 2 -->
           <span class="line-1">The beginning is not</span>
-          <span class="line-2">The best place to start.</span>
+          <span class="line-2">the best place to start.</span>
         </p>
       </li>
 
@@ -184,7 +179,8 @@
       <li class="statement-item">
         <span class="slash" aria-hidden="true">/</span>
         <p class="statement-text">
-          <span class="line-1">Self contradiction is to be expected</span>
+          <!-- fixed: italic Self -->
+          <span class="line-1"><em>Self</em> contradiction is to be expected</span>
           <span class="line-2">— especially here in America.</span>
         </p>
       </li>
@@ -279,8 +275,8 @@
 
     </ul>
 
-    <!-- Final unmoored line — same grid rhythm, no slash, no second line -->
-    <div class="statement-final" aria-label="Final statement">
+    <!-- Final line: same grid rhythm, no slash, line-1 color, no italic -->
+    <div class="statement-final">
       <span class="slash-empty" aria-hidden="true"></span>
       <span class="final-text">The project is always unfinished.</span>
     </div>
@@ -289,11 +285,9 @@
 
   <!-- ============================================================
        BIO
+       No section-title or accent-rule needed — sub-nav handles navigation
   ============================================================ -->
-  <section class="bio-section" id="bio" aria-labelledby="bio-heading">
-
-    <p class="section-title" id="bio-heading">Bio</p>
-    <div class="accent-rule"></div>
+  <section class="bio-section" id="bio">
 
     <div class="bio-text">
 
@@ -357,22 +351,25 @@
   'use strict';
 
   /* ----------------------------------------------------------
-     MEASURE HEADER HEIGHT and set CSS variable
-     This keeps all sticky positioning accurate regardless of
-     how the header renders at different screen sizes.
+     HEADER HEIGHT — set CSS variable and sub-nav top position
   ---------------------------------------------------------- */
+  const header = document.getElementById('site-header');
+  const subNav = document.getElementById('sub-nav');
+
   function setHeaderHeight () {
-    const h = document.getElementById('site-header').offsetHeight;
+    const h = header.offsetHeight;
     document.documentElement.style.setProperty('--header-h', h + 'px');
-    /* Also update sub-nav top to sit flush below header */
-    document.getElementById('sub-nav').style.top = h + 'px';
+    subNav.style.top = h + 'px';
   }
 
   setHeaderHeight();
   window.addEventListener('resize', setHeaderHeight, { passive: true });
 
   /* ----------------------------------------------------------
-     SUB-NAV: swap active/inactive as sections scroll into view
+     SUB-NAV SWITCHING
+     Uses IntersectionObserver to detect which section is visible.
+     rootMargin shifts the trigger point so switching happens
+     when the section heading reaches the sub-nav bottom edge.
   ---------------------------------------------------------- */
   const statementEl = document.getElementById('statement');
   const bioEl       = document.getElementById('bio');
@@ -382,40 +379,39 @@
   function setSubActive (section) {
     if (section === 'statement') {
       navStmt.classList.replace('sub-inactive', 'sub-active');
-      navBio.classList.replace('sub-active',   'sub-inactive');
+      navBio.classList.replace('sub-active',    'sub-inactive');
     } else {
       navBio.classList.replace('sub-inactive',  'sub-active');
-      navStmt.classList.replace('sub-active',  'sub-inactive');
+      navStmt.classList.replace('sub-active',   'sub-inactive');
     }
   }
 
-  const sectionObserver = new IntersectionObserver(function (entries) {
+  /* Observe sections — switch when a section occupies the middle of viewport */
+  const observer = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
       if (entry.isIntersecting) {
         setSubActive(entry.target.id);
       }
     });
   }, {
-    /* Trigger when section top crosses 40% of viewport height */
-    rootMargin: '-40% 0px -40% 0px',
+    rootMargin: '-35% 0px -35% 0px',
     threshold: 0
   });
 
-  sectionObserver.observe(statementEl);
-  sectionObserver.observe(bioEl);
+  observer.observe(statementEl);
+  observer.observe(bioEl);
 
   /* ----------------------------------------------------------
-     BACKGROUND IMAGE — slow zoom on scroll
+     BACKGROUND IMAGE — slow zoom as page scrolls
   ---------------------------------------------------------- */
   const bgImg = document.getElementById('bg-img');
 
   window.addEventListener('scroll', function () {
-    const scrolled = window.scrollY;
     const maxScroll = document.body.scrollHeight - window.innerHeight;
-    const progress = Math.min(scrolled / maxScroll, 1);
-    /* Scale from 1.05 (no scroll) to 1.22 (full scroll) */
-    const scale = 1.05 + progress * 0.17;
-    bgImg.style.transform = 'scale(' + scale + ')';
+    if (maxScroll <= 0) return;
+    const progress = Math.min(window.scrollY / maxScroll, 1);
+    /* Scale: 1.05 at top → 1.22 at bottom */
+    bgImg.style.transform = 'scale(' + (1.05 + progress * 0.17) + ')';
   }, { passive: true });
 
 })();
