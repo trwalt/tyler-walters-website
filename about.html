@@ -15,7 +15,7 @@
   <img class="parallax-bg-img"
        src="assets/skyty-frames/frame001.jpg"
        alt="" id="bg-img"
-       style="object-position: center center;">
+       style="top: 42%; left: 42%;">
 </div>
 
 <header class="site-header" id="site-header">
@@ -395,7 +395,7 @@
     if (maxScroll <= 0) return;
     const progress = Math.min(window.scrollY / maxScroll, 1);
     const scale = 1.05 + progress * 0.17;
-    bgImg.style.transform = 'translate(-50%, -50%) scale(' + scale + ')';
+    bgImg.style.transform = 'translate(-42%, -42%) scale(' + scale + ')';
   }, { passive: true });
 
 })();

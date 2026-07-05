@@ -76,10 +76,8 @@ body {
   position: absolute;
   top: 50%;
   left: 50%;
-  /* Centre the image then scale — JS updates scale via transform */
   transform: translate(-50%, -50%) scale(1.05);
   transform-origin: center center;
-  /* Make it large enough to cover at any scale */
   min-width: 100%;
   min-height: 100%;
   width: auto;
@@ -87,6 +85,8 @@ body {
   object-fit: cover;
   will-change: transform;
 }
+
+/* Per-page anchor overrides applied via inline style on the img tag */
 
 /* ============================================================
    SITE HEADER
