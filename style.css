@@ -76,6 +76,7 @@ body {
   width: 120%;
   height: 120%;
   object-fit: cover;
+  object-position: center center;
   transform-origin: center center;
   transform: scale(1.05);
   will-change: transform;

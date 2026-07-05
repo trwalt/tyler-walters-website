@@ -13,13 +13,11 @@
 
 <div class="parallax-bg" aria-hidden="true">
   <img class="parallax-bg-img"
-       src="assets/skyty-frames/frame030.jpg"
-       alt="" id="bg-img">
+       src="assets/skyty-frames/frame001.jpg"
+       alt="" id="bg-img"
+       style="object-position: center center;">
 </div>
 
-<!-- ============================================================
-     SITE HEADER
-============================================================ -->
 <header class="site-header" id="site-header">
   <span class="site-header-name" aria-hidden="true">Tyler Walters</span>
   <nav class="nav-bar" aria-label="Site navigation">
@@ -32,20 +30,13 @@
   </nav>
 </header>
 
-<!-- ============================================================
-     SUB-NAV — fixed, positioned by JS below header
-============================================================ -->
 <nav class="sub-nav" id="sub-nav" aria-label="Section navigation">
   <a href="#statement" class="sub-nav-item sub-active"   id="subnav-statement">Artist Statement/s</a>
   <a href="#bio"       class="sub-nav-item sub-inactive" id="subnav-bio">Bio</a>
 </nav>
 
-<!-- ============================================================
-     ABOUT PAGE CONTENT
-============================================================ -->
 <div class="about-page" id="about-page">
 
-  <!-- ARTIST STATEMENT -->
   <section class="statement-section" id="statement">
 
     <ul class="statement-list" aria-label="Artist statements">
@@ -260,14 +251,12 @@
 
     </ul>
 
-    <!-- Final line: left-aligned with text column, no slash, line-1 color -->
     <div class="statement-final">
       <span class="final-text">The project is always unfinished.</span>
     </div>
 
   </section>
 
-  <!-- BIO -->
   <section class="bio-section" id="bio">
     <div class="bio-text">
 
@@ -319,44 +308,52 @@
     </div>
   </section>
 
-</div><!-- end about-page -->
+</div>
 
 
 <script>
 (function () {
   'use strict';
 
-  /* ----------------------------------------------------------
-     MEASURE HEADER AND SUB-NAV HEIGHTS
-     Both are fixed elements. We measure both and set CSS vars
-     so the page content padding-top is always correct.
-  ---------------------------------------------------------- */
-  const header = document.getElementById('site-header');
-  const subNav = document.getElementById('sub-nav');
+  const header      = document.getElementById('site-header');
+  const subNav      = document.getElementById('sub-nav');
+  const aboutPage   = document.getElementById('about-page');
+  const statementEl = document.getElementById('statement');
+  const bioEl       = document.getElementById('bio');
+  const navStmt     = document.getElementById('subnav-statement');
+  const navBio      = document.getElementById('subnav-bio');
 
+  /* ----------------------------------------------------------
+     MEASURE HEIGHTS — sets all position-dependent values
+  ---------------------------------------------------------- */
   function setHeights () {
     const headerH = header.offsetHeight;
     const subNavH = subNav.offsetHeight;
-    document.documentElement.style.setProperty('--header-h',  headerH + 'px');
-    document.documentElement.style.setProperty('--subnav-h',  subNavH + 'px');
-    /* Position sub-nav flush below header */
+    const totalH  = headerH + subNavH;
+
+    document.documentElement.style.setProperty('--header-h', headerH + 'px');
+    document.documentElement.style.setProperty('--subnav-h', subNavH + 'px');
+
+    /* Sub-nav sits flush below header */
     subNav.style.top = headerH + 'px';
-    /* Position page content below both */
-    document.getElementById('about-page').style.paddingTop =
-      (headerH + subNavH) + 'px';
+
+    /* Page content starts below both */
+    aboutPage.style.paddingTop = totalH + 'px';
+
+    /* scroll-margin-top on sections so anchor clicks land correctly */
+    statementEl.style.scrollMarginTop = totalH + 'px';
+    bioEl.style.scrollMarginTop       = totalH + 'px';
   }
 
   setHeights();
   window.addEventListener('resize', setHeights, { passive: true });
 
   /* ----------------------------------------------------------
-     SUB-NAV SWITCHING
+     SUB-NAV SWITCHING — scroll-based, not IntersectionObserver.
+     Checks which section's top is closest to the bottom of the
+     fixed navigation area on every scroll event.
+     This correctly handles small scrolls and direction reversals.
   ---------------------------------------------------------- */
-  const statementEl = document.getElementById('statement');
-  const bioEl       = document.getElementById('bio');
-  const navStmt     = document.getElementById('subnav-statement');
-  const navBio      = document.getElementById('subnav-bio');
-
   function setSubActive (section) {
     if (section === 'statement') {
       navStmt.classList.replace('sub-inactive', 'sub-active');
@@ -367,14 +364,26 @@
     }
   }
 
-  const observer = new IntersectionObserver(function (entries) {
-    entries.forEach(function (entry) {
-      if (entry.isIntersecting) setSubActive(entry.target.id);
-    });
-  }, { rootMargin: '-35% 0px -35% 0px', threshold: 0 });
+  function onScroll () {
+    /* The boundary is the bottom edge of the fixed nav area */
+    const navBottom = header.offsetHeight + subNav.offsetHeight;
 
-  observer.observe(statementEl);
-  observer.observe(bioEl);
+    /* Bio section top relative to viewport */
+    const bioTop = bioEl.getBoundingClientRect().top;
+
+    /* If bio section top has scrolled above the nav boundary,
+       bio is the active section. Otherwise statement is active. */
+    if (bioTop <= navBottom + 20) {
+      setSubActive('bio');
+    } else {
+      setSubActive('statement');
+    }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  /* Run once on load to set initial state */
+  onScroll();
 
   /* ----------------------------------------------------------
      BACKGROUND IMAGE ZOOM ON SCROLL
