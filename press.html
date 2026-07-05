@@ -51,7 +51,7 @@
   const bgImg = document.getElementById('bg-img');
   window.addEventListener('scroll', function () {
     const progress = Math.min(window.scrollY / (document.body.scrollHeight - window.innerHeight), 1);
-    bgImg.style.transform = 'scale(' + (1.05 + progress * 0.17) + ')';
+    bgImg.style.transform = 'translate(-50%, -50%) scale(' + (1.05 + progress * 0.17) + ')';
   }, { passive: true });
 })();
 </script>

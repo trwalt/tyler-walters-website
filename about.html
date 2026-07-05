@@ -394,7 +394,8 @@
     const maxScroll = document.body.scrollHeight - window.innerHeight;
     if (maxScroll <= 0) return;
     const progress = Math.min(window.scrollY / maxScroll, 1);
-    bgImg.style.transform = 'scale(' + (1.05 + progress * 0.17) + ')';
+    const scale = 1.05 + progress * 0.17;
+    bgImg.style.transform = 'translate(-50%, -50%) scale(' + scale + ')';
   }, { passive: true });
 
 })();

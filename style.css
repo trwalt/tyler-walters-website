@@ -73,12 +73,18 @@ body {
 }
 
 .parallax-bg-img {
-  width: 120%;
-  height: 120%;
-  object-fit: cover;
-  object-position: center center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  /* Centre the image then scale — JS updates scale via transform */
+  transform: translate(-50%, -50%) scale(1.05);
   transform-origin: center center;
-  transform: scale(1.05);
+  /* Make it large enough to cover at any scale */
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: cover;
   will-change: transform;
 }
 
