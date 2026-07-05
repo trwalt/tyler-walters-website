@@ -14,8 +14,7 @@
 <div class="parallax-bg" aria-hidden="true">
   <img class="parallax-bg-img"
        src="assets/skyty-frames/frame001.jpg"
-       alt="" id="bg-img"
-       style="top: 42%; left: 42%;">
+       alt="" id="bg-img">
 </div>
 
 <header class="site-header" id="site-header">
@@ -387,16 +386,22 @@
 
   /* ----------------------------------------------------------
      BACKGROUND IMAGE ZOOM ON SCROLL
+     Offset: translateX(-42%) translateY(-42%) shifts the visible
+     portion so the figure appears upper-left of centre.
+     Applied on every scroll tick so there is no jump.
   ---------------------------------------------------------- */
   const bgImg = document.getElementById('bg-img');
 
-  window.addEventListener('scroll', function () {
+  function updateBg () {
     const maxScroll = document.body.scrollHeight - window.innerHeight;
-    if (maxScroll <= 0) return;
-    const progress = Math.min(window.scrollY / maxScroll, 1);
-    const scale = 1.05 + progress * 0.17;
+    const progress  = maxScroll > 0 ? Math.min(window.scrollY / maxScroll, 1) : 0;
+    const scale     = 1.05 + progress * 0.17;
     bgImg.style.transform = 'translate(-42%, -42%) scale(' + scale + ')';
-  }, { passive: true });
+  }
+
+  /* Set immediately on load so initial position matches scroll position */
+  updateBg();
+  window.addEventListener('scroll', updateBg, { passive: true });
 
 })();
 </script>

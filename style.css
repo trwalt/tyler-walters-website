@@ -74,6 +74,8 @@ body {
 
 .parallax-bg-img {
   position: absolute;
+  /* Position via transform only — JS updates this on scroll.
+     Initial value set here; pages needing offset use data attributes read by JS. */
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) scale(1.05);
@@ -85,8 +87,6 @@ body {
   object-fit: cover;
   will-change: transform;
 }
-
-/* Per-page anchor overrides applied via inline style on the img tag */
 
 /* ============================================================
    SITE HEADER
