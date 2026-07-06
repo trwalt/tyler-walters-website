@@ -14,12 +14,26 @@
       --accent-dim: rgba(106, 173, 238, 0.38);
     }
 
-    /* On the work page the header is sticky (not fixed) so it scrolls
-       with the reel strip until it hits the top, then locks in place */
+    /* On the work page the header starts in normal document flow
+       below the reel strip, then becomes fixed when it reaches the top.
+       JS adds .header-fixed class at the right scroll position. */
     .site-header {
-      position: sticky !important;
+      position: relative !important;   /* in normal flow initially */
+      top: auto !important;
+    }
+
+    .site-header.header-fixed {
+      position: fixed !important;
       top: 0 !important;
-      z-index: 110;
+    }
+
+    /* Spacer div — inserted by JS to prevent content jump when header fixes */
+    .header-spacer {
+      display: none;
+    }
+
+    .header-spacer.active {
+      display: block;
     }
 
     /* ---- Metadata ---- */
@@ -228,7 +242,7 @@
     /* ---- Reel strip ---- */
     .reel-strip {
       width: 100%;
-      aspect-ratio: 16 / 3;   /* matches 1920×360 — full vertical always visible */
+      aspect-ratio: 16 / 3;
       min-height: 80px;
       overflow: hidden;
       position: relative;
@@ -238,10 +252,11 @@
     .reel-strip video {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain;     /* never crops — shows full frame */
       object-position: center center;
       opacity: 0.8;
       display: block;
+      background: var(--ground-dark);
     }
 
     .reel-strip::before, .reel-strip::after {
@@ -288,6 +303,9 @@
     <a href="press.html"   class="nav-item">press</a>
   </nav>
 </header>
+
+<!-- Spacer — same height as header, visible only when header is fixed -->
+<div class="header-spacer" id="header-spacer"></div>
 
 <nav class="work-nav" id="work-nav" aria-label="Work sections">
   <a href="#foundational"    id="wn-foundational">foundational works</a>
@@ -607,15 +625,42 @@
 (function () {
   'use strict';
 
-  /* Header height — used by work-nav sticky top */
-  const header = document.getElementById('site-header');
+  /* ----------------------------------------------------------
+     HEADER SCROLL BEHAVIOUR
+     Header starts in normal document flow below the reel strip.
+     When it reaches the top of the viewport, it becomes fixed.
+     A spacer div prevents the content from jumping.
+  ---------------------------------------------------------- */
+  const header  = document.getElementById('site-header');
+  const spacer  = document.getElementById('header-spacer');
+  const reel    = document.querySelector('.reel-strip');
+  let headerFixed = false;
 
   function setHeaderHeight () {
-    document.documentElement.style.setProperty('--header-h', header.offsetHeight + 'px');
+    const h = header.offsetHeight;
+    document.documentElement.style.setProperty('--header-h', h + 'px');
+    spacer.style.height = h + 'px';
+  }
+
+  function onScrollHeader () {
+    const reelBottom = reel.getBoundingClientRect().bottom;
+    if (reelBottom <= 0 && !headerFixed) {
+      /* Reel has scrolled off — fix the header */
+      header.classList.add('header-fixed');
+      spacer.classList.add('active');
+      headerFixed = true;
+    } else if (reelBottom > 0 && headerFixed) {
+      /* Reel is back in view — unfix the header */
+      header.classList.remove('header-fixed');
+      spacer.classList.remove('active');
+      headerFixed = false;
+    }
   }
 
   setHeaderHeight();
   window.addEventListener('resize', setHeaderHeight, { passive: true });
+  window.addEventListener('scroll', onScrollHeader, { passive: true });
+  onScrollHeader();
 
   /* ----------------------------------------------------------
      STATEMENT TOGGLE
