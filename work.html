@@ -17,8 +17,8 @@
     /* On the work page the header is sticky (not fixed) so it scrolls
        with the reel strip until it hits the top, then locks in place */
     .site-header {
-      position: sticky;
-      top: 0;
+      position: sticky !important;
+      top: 0 !important;
       z-index: 110;
     }
 
@@ -274,7 +274,7 @@
 <!-- Reel strip — in normal document flow, scrolls away as visitor scrolls down -->
 <div class="reel-strip" aria-hidden="true">
   <video autoplay muted loop playsinline
-         src="https://pub-9acff69926f64d93a1d17dd9851c7179.r2.dev/reel-strip.mp4"></video>
+         src="https://pub-9acff69926f64d93a1d17dd9851c7179.r2.dev/banner-strip.mp4"></video>
 </div>
 
 <header class="site-header" id="site-header">
