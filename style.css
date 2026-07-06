@@ -349,8 +349,8 @@ body {
 ============================================================ */
 .work-page { padding-top: var(--header-h); position: relative; z-index: 1; }
 
-.reel-strip { width: 100%; height: clamp(100px, 16vw, 220px); overflow: hidden; position: relative; background: var(--ground-dark); }
-.reel-strip video, .reel-strip img { width: 100%; height: 100%; object-fit: cover; object-position: center 40%; opacity: 0.8; display: block; }
+.reel-strip { width: 100%; overflow: hidden; position: relative; background: var(--ground-dark); }
+.reel-strip video, .reel-strip img { width: 100%; height: 100%; object-fit: cover; object-position: center center; opacity: 0.8; display: block; }
 .reel-strip::before, .reel-strip::after { content: ''; position: absolute; top: 0; bottom: 0; width: 10%; z-index: 2; pointer-events: none; }
 .reel-strip::before { left: 0; background: linear-gradient(to right, var(--ground) 0%, transparent 100%); }
 .reel-strip::after  { right: 0; background: linear-gradient(to left,  var(--ground) 0%, transparent 100%); }

@@ -242,9 +242,7 @@
     /* ---- Reel strip ---- */
     .reel-strip {
       width: 100%;
-      /* Slightly taller than 16:3 so video scales up to fill width
-         with no vertical cropping and no side borders */
-      aspect-ratio: 16 / 4.5;
+      height: 280px;           /* explicit height — increase or decrease to taste */
       min-height: 80px;
       overflow: hidden;
       position: relative;
@@ -254,7 +252,7 @@
     .reel-strip video {
       width: 100%;
       height: 100%;
-      object-fit: cover;       /* fills container, sides crop naturally */
+      object-fit: cover;
       object-position: center center;
       opacity: 0.8;
       display: block;
